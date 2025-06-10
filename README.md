@@ -155,7 +155,7 @@ Aquí se detalla la función de los componentes y servicios principales del proy
 
 Si tienes alguna pregunta, sugerencia o simplemente quieres contactarme, no dudes en enviar un correo electrónico a:
 
-**EmanuelCompany@mail.com.ar** *(¡Recuerda reemplazar este correo electrónico con tu dirección real si la haces pública!)*
+**emanuel_vera@live.com.ar** 
 
 ---
 
