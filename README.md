@@ -91,7 +91,7 @@ Aquí se detalla la función de los componentes y servicios principales del proy
 #### 🛠️ `src/app/core/services/pokemon.service.ts`
 * **Función**: Este servicio es el encargado de toda la lógica relacionada con la obtención y gestión de datos de Pokémon.
     * **Comunicación con la API**: Realiza las peticiones HTTP a la PokeAPI para obtener información de los Pokémon existentes (ej. los primeros 151).
-    * **Manejo de Datos**: Puede incluir métodos para filtrar, buscar o transformar los datos de Pokémon antes de que lleguen a los componentes.
+    * **Manejo de Datos**: métodos para filtrar, buscar o transformar los datos de Pokémon antes de que lleguen a los componentes.
     * **Gestión de Pokémon Creados**: Si los Pokémon personalizados se persisten (ej. en un servicio de almacenamiento local o en una pequeña base de datos en memoria), este servicio sería el responsable de ello.
 * **Importancia**: Centraliza la lógica de datos, desacoplando los componentes de la implementación de la API y haciendo el código más modular y mantenible.
 
@@ -103,21 +103,11 @@ Aquí se detalla la función de los componentes y servicios principales del proy
 * **`home.html`**:
     * **Función**: Define la estructura visual de la página de inicio.
     * **Contenido**: Contendrá el título de bienvenida, posiblemente una imagen temática de Pokémon y botones o enlaces para navegar a la Pokedex o a la sección de creación.
-* **`home.css`**:
-    * **Función**: Estilos específicos para la página de inicio.
-    * **Estilo**: Probablemente incluye estilos para centrar el contenido, definir el fondo, animaciones de texto o botones llamativos.
 
 #### ℹ️ `src/app/features/nosotros/` (Componente `Nosotros`)
-* **`nosotros.component.ts`**:
-    * **Función**: Un componente de presentación.
-    * **Lógica**: Muy mínima o nula. Sirve principalmente como un contenedor para la plantilla HTML estática.
-    * **No. de Líneas (ejem.)**: Muy corto, solo el decorador `@Component` y la clase vacía.
 * **`nosotros.html`**:
-    * **Función**: Presenta información sobre el creador del proyecto (Emanuel Vera), el propósito de la aplicación y sus características principales.
+    * **Función**: Presenta información sobre Mi, el propósito de la aplicación y sus características principales.
     * **Contenido**: Texto descriptivo, listas de características con iconos, y un enlace de contacto.
-* **`nosotros.css`**:
-    * **Función**: Estilos para la sección "Acerca de Nosotros".
-    * **Estilo**: Define el diseño de los paneles, la tipografía específica para títulos y texto, sombras, y los estilos de los iconos y enlaces de contacto, con un diseño adaptable para diferentes tamaños de pantalla.
 
 #### 🔍 `src/app/features/pokedex/` (Componente `Pokedex`)
 * **`pokedex.component.ts`**:
@@ -130,9 +120,6 @@ Aquí se detalla la función de los componentes y servicios principales del proy
 * **`pokedex.html`**:
     * **Función**: Presenta la interfaz de usuario para explorar Pokémon.
     * **Contenido**: Un campo de búsqueda, una lista o cuadrícula de tarjetas de Pokémon, cada una mostrando información básica (nombre, imagen, tipo). Utiliza bucles `*ngFor` para renderizar la lista de Pokémon.
-* **`pokedex.css`**:
-    * **Función**: Estilos para la lista y las tarjetas de Pokémon.
-    * **Estilo**: Probablemente incluye diseño de cuadrícula (`display: grid`), estilos para las tarjetas de Pokémon (bordes, sombras, fondos por tipo), estilos para el campo de búsqueda, y responsividad para diferentes dispositivos.
 
 #### 🎨 `src/app/features/crear-pokemon/` (Componente `CrearPokemon`)
 * **`crear-pokemon.component.ts`**:
@@ -145,17 +132,6 @@ Aquí se detalla la función de los componentes y servicios principales del proy
 * **`crear-pokemon.html`**:
     * **Función**: Define el formulario interactivo para que el usuario ingrese la información de su Pokémon.
     * **Contenido**: Campos de entrada para nombre, tipo, descripción, URL de imagen, etc. Botones para "Crear" y "Cancelar".
-* **`crear-pokemon.css`**:
-    * **Función**: Estilos para el formulario de creación.
-    * **Estilo**: Probablemente incluye estilos para los campos de entrada, botones, mensajes de validación y el diseño general del formulario, asegurando una buena usabilidad en diferentes tamaños de pantalla.
-
----
-
-## 📧 Contacto
-
-Si tienes alguna pregunta, sugerencia o simplemente quieres contactarme, no dudes en enviar un correo electrónico a:
-
-**emanuel_vera@live.com.ar** 
 
 ---
 
