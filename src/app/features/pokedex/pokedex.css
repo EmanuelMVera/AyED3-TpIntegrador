@@ -1,0 +1,499 @@
+/*
+ * Archivo: pokedex.component.css
+ * Descripción: Define los estilos visuales y de layout para la página de la Pokédex.
+ * Incluye el diseño de la cuadrícula de Pokémon, animaciones de tarjetas volteables,
+ * estilos para la barra de búsqueda y los controles de paginación,
+ * además de estilos específicos para cada tipo de Pokémon y adaptaciones responsivas.
+ */
+
+/* --- 1. Contenedor Principal de la Pokédex --- */
+.pokedex-container {
+  padding: 30px 20px; /* Espaciado interno para el contenido de la página */
+  max-width: 1400px; /* Limita el ancho máximo para una mejor legibilidad en pantallas grandes */
+  margin: 0 auto; /* Centra el contenedor principal horizontalmente en la página */
+  text-align: center; /* Centra el texto y los elementos en línea dentro del contenedor */
+  padding-bottom: 100px; /* Añade espacio inferior para asegurar que el contenido no sea
+                           ocultado por un posible pie de página (footer) fijo. */
+}
+
+/* Estilos para el título principal de la sección de la Pokédex. */
+h2 {
+  font-size: 2.8em; /* Tamaño de fuente del título */
+  color: var(--dark-gray); /* Color de texto utilizando una variable CSS */
+  margin-bottom: 30px; /* Margen inferior para separar del contenido siguiente */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil para el texto del título */
+  font-weight: bold; /* Texto en negrita */
+}
+
+/* --- 2. Barra de Búsqueda --- */
+.search-bar {
+  display: flex; /* Utiliza Flexbox para organizar los elementos en una fila */
+  justify-content: center; /* Centra los elementos hijos horizontalmente */
+  margin-bottom: 40px; /* Margen inferior para separar de la cuadrícula de Pokémon */
+  gap: 10px; /* Espacio entre los elementos (input y botón) */
+  align-items: center; /* Alinea los elementos verticalmente al centro */
+}
+
+/* Estilos para el campo de entrada de texto de la búsqueda. */
+.pokemon-search-input {
+  width: 100%; /* Ocupa el 100% del ancho disponible en su contenedor */
+  max-width: 400px; /* Limita el ancho máximo del input */
+  padding: 12px 20px; /* Espaciado interno del input */
+  border: 2px solid var(--primary-red); /* Borde con color principal rojo */
+  border-radius: 30px; /* Bordes muy redondeados para un estilo de "píldora" */
+  font-size: 1.1em; /* Tamaño de fuente del texto de entrada */
+  outline: none; /* Elimina el contorno predeterminado del navegador al enfocar */
+  transition: all 0.3s ease; /* Transición suave para todos los cambios de propiedades */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+}
+
+/* Estilos para el input de búsqueda cuando está enfocado. */
+.pokemon-search-input:focus {
+  border-color: var(--secondary-red); /* Cambia el color del borde al enfocar */
+  box-shadow: 0 0 12px rgba(var(--primary-red), 0.4); /* Añade una sombra más pronunciada con un color temático */
+}
+
+/* Estilos para el botón de búsqueda. */
+.search-button {
+  background-color: var(--primary-red); /* Color de fondo principal rojo */
+  color: var(--pure-white); /* Color del icono (blanco puro) */
+  border: none; /* Sin borde */
+  border-radius: 50%; /* Hace el botón completamente redondo */
+  width: 50px; /* Ancho fijo */
+  height: 50px; /* Alto fijo (igual que el ancho para ser un círculo) */
+  display: flex; /* Utiliza Flexbox para centrar el icono */
+  align-items: center; /* Centra el icono verticalmente */
+  justify-content: center; /* Centra el icono horizontalmente */
+  cursor: pointer; /* Cambia el cursor a puntero al pasar por encima */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Transiciones suaves para interactividad */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Sombra para el botón */
+}
+
+/* Efecto al pasar el ratón sobre el botón de búsqueda. */
+.search-button:hover {
+  background-color: var(--secondary-red); /* Cambia el color de fondo a un rojo secundario */
+  transform: scale(1.1); /* Escala el botón ligeramente para un efecto visual */
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3); /* Aumenta la sombra */
+}
+
+/* Estilos para el icono de Material Icons dentro del botón de búsqueda. */
+.search-button .material-icons {
+  font-size: 1.6em; /* Tamaño del icono */
+}
+
+/* --- 3. Grid de Pokémon (Contenedor de Tarjetas) --- */
+.pokemon-grid {
+  display: grid; /* Utiliza CSS Grid para crear una cuadrícula de tarjetas */
+  /* Define las columnas de la cuadrícula:
+     - `repeat(auto-fill, ...)`: Repite las columnas para llenar el espacio disponible.
+     - `minmax(220px, 1fr)`: Cada columna tendrá un ancho mínimo de 220px y un máximo
+                             que ocupará una fracción igual del espacio restante.
+                             Esto crea un diseño responsivo que ajusta el número de columnas.
+  */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px; /* Espacio entre las filas y columnas de la cuadrícula */
+  margin-bottom: 40px; /* Margen inferior para separar de los controles de paginación */
+  justify-items: center; /* Centra las tarjetas horizontalmente dentro de sus celdas de la cuadrícula */
+  align-items: start; /* Alinea las tarjetas al inicio de su fila (útil si las alturas varían) */
+}
+
+/* --- 4. Tarjeta de Pokémon Individual --- */
+.pokemon-card {
+  background-color: var(--pure-white); /* Color de fondo blanco para la tarjeta */
+  border-radius: 15px; /* Bordes redondeados */
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15); /* Sombra para un efecto de profundidad */
+  padding: 20px; /* Espaciado interno de la tarjeta */
+  text-align: center; /* Centra el texto y los elementos en línea dentro de la tarjeta */
+  cursor: pointer; /* Cambia el cursor a puntero para indicar que es clickeable */
+  perspective: 1000px; /* Habilita el contexto 3D para los elementos hijos, esencial para el efecto de volteo */
+  transition: transform 0.6s ease-in-out; /* Transición para la animación de volteo */
+  transform-style: preserve-3d; /* Asegura que los elementos hijos se posicionen en un espacio 3D */
+  position: relative; /* Establece un contexto de posicionamiento para elementos absolutos internos (ej. botón de borrar) */
+  height: 360px; /* Altura fija para uniformidad en la cuadrícula */
+  width: 100%; /* Ocupa todo el ancho disponible en su celda de la cuadrícula */
+  display: flex; /* Utiliza Flexbox para organizar el contenido verticalmente */
+  flex-direction: column; /* Organiza los ítems en una columna */
+  justify-content: center; /* Centra el contenido verticalmente */
+  align-items: center; /* Centra el contenido horizontalmente */
+  overflow: hidden; /* Oculta cualquier contenido que se desborde, útil para sombras o bordes internos */
+}
+
+/* Efecto al pasar el ratón sobre la tarjeta de Pokémon. */
+.pokemon-card:hover {
+  transform: translateY(-8px) scale(1.02); /* Eleva y agranda ligeramente la tarjeta */
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25); /* Aumenta la sombra para un efecto de mayor elevación */
+}
+
+/* Estilo para la tarjeta cuando está volteada. */
+.pokemon-card.flipped {
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25); /* Mantiene la sombra de "hover" para indicar que está activa */
+}
+
+/* --- 5. Contenedor Interno para el Volteo de la Tarjeta --- */
+.card-inner {
+  position: relative; /* Permite posicionar las caras frontal y trasera */
+  width: 100%; /* Ocupa el 100% del ancho de la tarjeta padre */
+  height: 100%; /* Ocupa el 100% de la altura de la tarjeta padre */
+  text-align: center; /* Centra el texto dentro del contenedor */
+  transition: transform 0.6s ease-in-out; /* Transición para la animación de rotación del volteo */
+  transform-style: preserve-3d; /* Asegura que las caras se comporten en un espacio 3D */
+}
+
+/* Estilo para el contenedor interno cuando la tarjeta está volteada. */
+.pokemon-card.flipped .card-inner {
+  transform: rotateY(180deg); /* Rota el contenedor interno 180 grados en el eje Y,
+                                lo que provoca el efecto de volteo de las caras. */
+}
+
+/* --- 6. Caras de la Tarjeta (Frontal y Trasera) --- */
+.card-front,
+.card-back {
+  position: absolute; /* Posicionamiento absoluto para superponer ambas caras */
+  width: 100%; /* Ambas caras ocupan el 100% del ancho del contenedor interno */
+  height: 100%; /* Ambas caras ocupan el 100% de la altura del contenedor interno */
+  -webkit-backface-visibility: hidden; /* Oculta la cara que está mirando hacia atrás
+                                         durante la rotación en navegadores WebKit. */
+  backface-visibility: hidden; /* Oculta la cara que está mirando hacia atrás durante la rotación.
+                                  Es crucial para que una cara no se vea a través de la otra. */
+  display: flex; /* Utiliza Flexbox para organizar el contenido de cada cara */
+  flex-direction: column; /* Organiza los elementos en una columna */
+  align-items: center; /* Centra los elementos horizontalmente */
+  padding: 15px; /* Espaciado interno general para el contenido de ambas caras */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho/alto total */
+  border-radius: 15px; /* Aplica el mismo radio de borde que la tarjeta principal */
+  overflow: hidden; /* Asegura que el contenido no se desborde de las caras */
+}
+
+/* Estilos específicos para la cara frontal de la tarjeta. */
+.card-front {
+  justify-content: space-between; /* Distribuye el espacio verticalmente entre los elementos
+                                     (ID, imagen, nombre/tipos). */
+  padding-top: 10px; /* Ajuste del padding superior */
+  padding-bottom: 10px; /* Ajuste del padding inferior */
+}
+
+/* Estilos específicos para la cara trasera de la tarjeta (descripción). */
+.card-back {
+  transform: rotateY(180deg); /* Rota la cara trasera 180 grados inicialmente para que esté oculta */
+  background-color: var(--secondary-red); /* Color de fondo rojo secundario */
+  color: var(--pure-white); /* Color de texto blanco puro */
+  font-size: 0.98em; /* Tamaño de fuente para la descripción */
+  line-height: 1.6; /* Altura de línea para mejorar la legibilidad del texto */
+  text-align: center; /* Centra el texto de la descripción */
+  padding: 25px; /* Espaciado interno de la cara trasera */
+  justify-content: center; /* Centra el contenido verticalmente */
+  align-items: center; /* Centra el contenido horizontalmente */
+  overflow-y: auto; /* Permite el scroll vertical si la descripción es demasiado larga */
+}
+
+/* Estilos para el ID del Pokémon (#001, #025, etc.). */
+.pokemon-id {
+  font-size: 1.1em; /* Tamaño de fuente */
+  color: var(--dark-gray); /* Color de texto gris oscuro */
+  font-weight: bold; /* Texto en negrita */
+  margin-bottom: 5px; /* Margen inferior */
+  align-self: flex-start; /* Alinea el ID a la esquina superior izquierda dentro de Flexbox */
+  padding-left: 5px; /* Pequeño padding a la izquierda */
+}
+
+/* Estilos para la imagen del Pokémon. */
+.pokemon-image {
+  width: 120px; /* Ancho fijo de la imagen */
+  height: 120px; /* Alto fijo de la imagen */
+  object-fit: contain; /* Asegura que la imagen se ajuste dentro de sus dimensiones
+                         sin ser recortada ni distorsionada. */
+  margin-bottom: 10px; /* Margen inferior */
+  filter: drop-shadow(3px 5px 8px rgba(0, 0, 0, 0.3)); /* Añade una sombra a la imagen (no al cuadro) */
+  margin-top: auto; /* Empuja la imagen hacia el centro inferior si el ID está arriba
+                       y el nombre/tipos están debajo en la cara frontal. */
+}
+
+/* Estilos para el nombre del Pokémon. */
+h3 {
+  font-size: 1.7em; /* Tamaño de fuente del nombre */
+  color: var(--dark-gray); /* Color de texto gris oscuro */
+  margin-top: 0; /* Sin margen superior */
+  margin-bottom: auto; /* Empuja el nombre hacia el centro superior si los tipos están abajo
+                         en la cara frontal. */
+  font-weight: bold; /* Texto en negrita */
+  text-transform: capitalize; /* Capitaliza la primera letra de cada palabra del nombre (redundante con pipe) */
+}
+
+/* Contenedor de los tipos de Pokémon. */
+.pokemon-types {
+  display: flex; /* Utiliza Flexbox para alinear los tipos */
+  justify-content: center; /* Centra los tipos horizontalmente */
+  flex-wrap: wrap; /* Permite que los elementos de tipo se envuelvan a la siguiente línea si no hay espacio */
+  gap: 6px; /* Espacio entre los "botones" de tipo */
+  margin-top: 8px; /* Margen superior */
+  margin-bottom: 0; /* Sin margen inferior */
+  padding: 0 5px; /* Pequeño padding horizontal */
+  box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  min-height: 25px; /* Altura mínima para asegurar espacio incluso sin tipos */
+  word-break: break-word; /* Rompe palabras largas si no caben (aunque `white-space: nowrap` lo evita) */
+}
+
+/* Estilos para cada "botón" de tipo de Pokémon. */
+.pokemon-type {
+  padding: 6px 12px; /* Espaciado interno */
+  border-radius: 25px; /* Bordes muy redondeados (forma de píldora) */
+  font-size: 0.85em; /* Tamaño de fuente */
+  font-weight: bold; /* Texto en negrita */
+  color: var(--pure-white); /* Color de texto blanco puro */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); /* Sombra para el tipo */
+  transition: transform 0.2s ease; /* Transición suave para el efecto de hover */
+  white-space: nowrap; /* Evita que el texto del tipo se rompa en varias líneas */
+  flex-shrink: 0; /* Evita que los elementos de tipo se encojan si el espacio es limitado */
+}
+
+/* Efecto al pasar el ratón sobre un tipo de Pokémon. */
+.pokemon-type:hover {
+  transform: translateY(-2px); /* Eleva ligeramente el tipo al pasar el ratón */
+}
+
+/* --- 7. Estilos de Tipos de Pokémon (Colores Específicos) ---
+ * NOTA IMPORTANTE: Estas clases son generadas dinámicamente en el HTML
+ * basándose en el tipo de Pokémon (ej. 'type-fire').
+ * Contienen los colores de fondo oficiales para cada tipo.
+ * No deben ser movidas ni modificadas sin conocer su impacto.
+ */
+.type-normal { background-color: #a8a878; } /* Color para tipo Normal */
+.type-fire { background-color: #f08030; } /* Color para tipo Fuego */
+.type-water { background-color: #6890f0; } /* Color para tipo Agua */
+.type-grass { background-color: #78c850; } /* Color para tipo Planta */
+.type-electric { background-color: #f8d030; } /* Color para tipo Eléctrico */
+.type-ice { background-color: #98d8d8; } /* Color para tipo Hielo */
+.type-fighting { background-color: #c03028; } /* Color para tipo Lucha */
+.type-poison { background-color: #a040a0; } /* Color para tipo Veneno */
+.type-ground { background-color: #e0c068; } /* Color para tipo Tierra */
+.type-flying { background-color: #a890f0; } /* Color para tipo Volador */
+.type-psychic { background-color: #f85888; } /* Color para tipo Psíquico */
+.type-bug { background-color: #a8b820; } /* Color para tipo Bicho */
+.type-rock { background-color: #b8a038; } /* Color para tipo Roca */
+.type-ghost { background-color: #705898; } /* Color para tipo Fantasma */
+.type-dragon { background-color: #7038f8; } /* Color para tipo Dragón */
+.type-steel { background-color: #b8b8d0; } /* Color para tipo Acero */
+.type-dark { background-color: #705848; } /* Color para tipo Siniestro */
+.type-fairy { background-color: #ee99ac; } /* Color para tipo Hada */
+
+/* Mensaje que se muestra cuando no se encuentran resultados en la búsqueda/filtro. */
+.no-results {
+  grid-column: 1 / -1; /* Ocupa todo el ancho de la cuadrícula, desde la primera hasta la última columna */
+  font-size: 1.3em; /* Tamaño de fuente */
+  color: var(--medium-gray); /* Color de texto gris */
+  margin-top: 50px; /* Margen superior para separación */
+  font-weight: bold; /* Texto en negrita */
+}
+
+/* --- 8. Controles de Paginación --- */
+.pagination-controls {
+  display: flex; /* Utiliza Flexbox para alinear los controles de paginación */
+  justify-content: center; /* Centra los elementos horizontalmente */
+  align-items: center; /* Alinea los elementos verticalmente al centro */
+  gap: 25px; /* Espacio entre los botones y el indicador de página */
+  font-size: 1.2em; /* Tamaño de fuente para el texto de la paginación */
+  color: var(--dark-gray); /* Color de texto gris oscuro */
+  margin-top: 30px; /* Margen superior para separación */
+  font-weight: 500; /* Grosor de fuente */
+}
+
+/* Estilos para los botones de paginación (Anterior/Siguiente). */
+.pagination-button {
+  background-color: var(--primary-red); /* Color de fondo principal rojo */
+  color: var(--pure-white); /* Color del texto e icono (blanco puro) */
+  border: none; /* Sin borde */
+  padding: 12px 25px; /* Espaciado interno */
+  border-radius: 30px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor a puntero */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+  display: inline-flex; /* Permite alinear el texto y el icono */
+  align-items: center; /* Centra el texto y el icono verticalmente */
+  gap: 8px; /* Espacio entre el texto y el icono */
+  font-weight: bold; /* Texto en negrita */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Sombra para el botón */
+}
+
+/* Efecto al pasar el ratón sobre los botones de paginación (si no están deshabilitados). */
+.pagination-button:hover:not(:disabled) {
+  background-color: var(--secondary-red); /* Cambia el color de fondo */
+  transform: translateY(-5px); /* Eleva el botón ligeramente */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Aumenta la sombra */
+}
+
+/* Estilos para los botones de paginación cuando están deshabilitados. */
+.pagination-button:disabled {
+  background-color: var(--medium-gray); /* Color de fondo gris */
+  cursor: not-allowed; /* Cambia el cursor para indicar que no es clicable */
+  opacity: 0.6; /* Reduce la opacidad */
+}
+
+/* --- 9. Botón para Eliminar Pokémon Creado por el Usuario --- */
+.delete-pokemon-button {
+  position: absolute; /* Posicionamiento absoluto respecto a su contenedor padre (.pokemon-card) */
+  top: 10px; /* Posicionado a 10px del borde superior */
+  right: 10px; /* Posicionado a 10px del borde derecho */
+  background-color: var(--error-red); /* Color de fondo rojo de error */
+  color: var(--pure-white); /* Color del icono blanco puro */
+  border: none; /* Sin borde */
+  border-radius: 50%; /* Hace el botón completamente redondo */
+  width: 28px; /* Ancho fijo */
+  height: 28px; /* Alto fijo */
+  display: flex; /* Utiliza Flexbox para centrar el icono */
+  align-items: center; /* Centra el icono verticalmente */
+  justify-content: center; /* Centra el icono horizontalmente */
+  cursor: pointer; /* Cambia el cursor a puntero */
+  z-index: 10; /* Asegura que el botón esté por encima de otros elementos de la tarjeta */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para el botón */
+  transition: background-color 0.2s ease, transform 0.2s ease; /* Transiciones suaves */
+  opacity: 0.8; /* Ligera transparencia por defecto */
+}
+
+/* Efecto al pasar el ratón sobre el botón de eliminar. */
+.delete-pokemon-button:hover {
+  background-color: #a71d2a; /* Color rojo más oscuro al pasar el ratón */
+  transform: scale(1.1); /* Escala el botón ligeramente */
+  opacity: 1; /* Elimina la transparencia */
+}
+
+/* Estilos para el icono de Material Icons dentro del botón de eliminar. */
+.delete-pokemon-button .material-icons {
+  font-size: 1.2em; /* Tamaño del icono */
+}
+
+/* --- 10. Media Queries para Responsive (Ajustes Detallados) --- */
+
+/* Estilos para pantallas de hasta 992px de ancho (tablets y laptops pequeñas) */
+@media (max-width: 992px) {
+  .pokemon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Ajusta el tamaño mínimo de la tarjeta */
+    gap: 20px; /* Reduce el espacio entre tarjetas */
+  }
+  .pokemon-card {
+    height: 320px; /* Ajusta la altura de la tarjeta */
+    padding: 15px; /* Reduce el padding */
+  }
+  .pokemon-image {
+    width: 110px; /* Reduce el tamaño de la imagen */
+    height: 110px;
+  }
+  h3 {
+    font-size: 1.3em; /* Reduce el tamaño del nombre del Pokémon */
+  }
+  .pokemon-id {
+    font-size: 0.9em; /* Reduce el tamaño del ID */
+  }
+  .pokemon-types {
+    gap: 5px; /* Reduce el espacio entre tipos */
+    min-height: 22px; /* Ajusta la altura mínima de los tipos */
+  }
+  .pokemon-type {
+    font-size: 0.75em; /* Reduce el tamaño de fuente del tipo */
+    padding: 4px 9px; /* Ajusta el padding del tipo */
+  }
+}
+
+/* Estilos para pantallas de hasta 768px de ancho (tablets en vertical y móviles grandes) */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 2em; /* Reduce el tamaño del título principal */
+    margin-bottom: 20px;
+  }
+  .search-bar {
+    flex-direction: column; /* Coloca el input y el botón en columna */
+    gap: 12px; /* Ajusta el espacio entre ellos */
+  }
+  .search-button {
+    width: 45px; /* Ajusta el tamaño del botón de búsqueda */
+    height: 45px;
+  }
+  .pokemon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Más columnas pequeñas */
+    gap: 15px;
+  }
+  .pokemon-card {
+    height: 290px; /* Ajusta la altura de la tarjeta */
+    padding: 12px;
+  }
+  .pokemon-image {
+    width: 90px; /* Reduce el tamaño de la imagen */
+    height: 90px;
+  }
+  h3 {
+    font-size: 1.05em; /* Reduce el tamaño del nombre */
+  }
+  .pokemon-id {
+    font-size: 0.8em; /* Reduce el tamaño del ID */
+  }
+  .pokemon-types {
+    gap: 4px; /* Reduce el espacio entre tipos */
+    margin-top: 5px;
+    min-height: 20px;
+  }
+  .pokemon-type {
+    font-size: 0.68em; /* Reduce el tamaño de fuente del tipo */
+    padding: 3px 6px;
+  }
+  .card-back {
+    font-size: 0.85em; /* Reduce el tamaño de fuente de la descripción */
+    padding: 18px;
+  }
+  .pagination-controls {
+    flex-direction: column; /* Coloca los controles de paginación en columna */
+    gap: 12px;
+    font-size: 0.95em;
+  }
+  .pagination-button {
+    padding: 8px 18px; /* Ajusta el padding de los botones de paginación */
+    font-size: 0.9em;
+  }
+}
+
+/* Estilos para pantallas de hasta 480px de ancho (móviles pequeños) */
+@media (max-width: 480px) {
+  .pokedex-container {
+    padding: 15px 8px; /* Reduce el padding del contenedor principal */
+  }
+  h2 {
+    font-size: 1.6em;
+  }
+  .pokemon-search-input {
+    padding: 10px 15px;
+    font-size: 1em;
+  }
+  .search-button {
+    width: 40px;
+    height: 40px;
+  }
+  .pokemon-grid {
+    grid-template-columns: 1fr; /* Una sola columna para los Pokémon en móviles muy pequeños */
+    gap: 10px;
+  }
+  .pokemon-card {
+    height: 270px; /* Ajusta la altura de la tarjeta */
+    padding: 10px;
+  }
+  .pokemon-image {
+    width: 80px; /* Reduce el tamaño de la imagen */
+    height: 80px;
+  }
+  h3 {
+    font-size: 0.95em;
+  }
+  .pokemon-id {
+    font-size: 0.7em;
+  }
+  .pokemon-types {
+    gap: 3px;
+    margin-top: 3px;
+    min-height: 18px;
+  }
+  .pokemon-type {
+    font-size: 0.6em;
+    padding: 2px 4px;
+  }
+  .card-back {
+    font-size: 0.8em;
+    padding: 12px;
+  }
+}

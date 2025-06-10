@@ -1,0 +1,141 @@
+<!--
+/**
+ * @component PokedexComponent
+ * @description Vista principal de la Pokédex de la primera generación.
+ *              Permite buscar, visualizar, paginar y eliminar Pokémon.
+ */
+-->
+<div class="pokedex-container">
+  <!--
+    @section Título
+    @description Encabezado principal del componente.
+  -->
+  <h2>Pokédex (Primera Generación)</h2>
+
+  <!--
+    @section Barra de búsqueda
+    @description Permite al usuario buscar Pokémon por nombre.
+    @binding [(ngModel)] searchTerm - Modelo bidireccional del campo de búsqueda.
+    @event (input) onSearch() - Ejecuta búsqueda al escribir.
+  -->
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+      placeholder="Buscar Pokémon por nombre..."
+      class="pokemon-search-input"
+    />
+    <button class="search-button" (click)="onSearch()">
+      <span class="material-icons">search</span>
+    </button>
+  </div>
+
+  <!--
+    @section Grid de Pokémon
+    @description Contenedor principal que muestra las tarjetas de Pokémon.
+    @directive *ngFor - Itera sobre paginatedPokemons.
+    @binding [class.flipped] - Controla si una tarjeta está volteada.
+    @event (click) flipCard(id) - Voltea la tarjeta correspondiente.
+  -->
+  <div class="pokemon-grid">
+    <div
+      *ngFor="let pokemon of paginatedPokemons; trackBy: trackByPokemonId"
+      class="pokemon-card"
+      [class.flipped]="flippedCardId === pokemon.id"
+      (click)="flipCard(pokemon.id)"
+    >
+      <div class="card-inner">
+        <!--
+          @subsection Cara frontal
+          @description Muestra imagen, nombre, tipos y botón de eliminación (si aplica).
+        -->
+        <div class="card-front">
+          <span class="pokemon-id">#{{ pokemon.id | number: '3.0' }}</span>
+
+          <!--
+            @condition *ngIf pokemon.isUserCreated
+            @description Muestra botón para eliminar Pokémon si es creado por el usuario.
+            @event (click) deleteUserPokemon($event, id) - Elimina el Pokémon.
+          -->
+          <button
+            *ngIf="pokemon.isUserCreated"
+            class="delete-pokemon-button"
+            (click)="deleteUserPokemon($event, pokemon.id)"
+            title="Eliminar Pokémon creado"
+          >
+            <span class="material-icons">close</span>
+          </button>
+
+          <img
+            [src]="pokemon.imageUrl"
+            [alt]="pokemon.name"
+            class="pokemon-image"
+          />
+
+          <h3>{{ pokemon.name | titlecase }}</h3>
+
+          <!--
+            @subsection Tipos del Pokémon
+            @description Muestra todos los tipos del Pokémon.
+            @directive *ngFor - Itera sobre pokemon.types.
+            @binding [ngClass] getTypeClass(type) - Aplica estilo por tipo.
+          -->
+          <div class="pokemon-types">
+            <span
+              *ngFor="let type of pokemon.types"
+              class="pokemon-type"
+              [ngClass]="getTypeClass(type)"
+            >
+              {{ getTranslatedType(type) }}
+            </span>
+          </div>
+        </div>
+
+        <!--
+          @subsection Cara trasera
+          @description Muestra la descripción del Pokémon.
+        -->
+        <div class="card-back">
+          <p class="pokemon-description">
+            {{ pokemonDescriptions[pokemon.id] || 'Cargando descripción...' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      @condition *ngIf filteredPokemons.length === 0
+      @description Muestra mensaje si no hay resultados tras filtrar.
+    -->
+    <div *ngIf="filteredPokemons.length === 0" class="no-results">
+      No se encontraron Pokémon.
+    </div>
+  </div>
+
+  <!--
+    @section Controles de paginación
+    @description Permiten navegar entre las páginas de resultados.
+    @event (click) prevPage(), nextPage()
+    @binding [disabled] - Desactiva botones según la página actual.
+  -->
+  <div class="pagination-controls">
+    <button
+      (click)="prevPage()"
+      [disabled]="currentPage === 1"
+      class="pagination-button"
+    >
+      <span class="material-icons">chevron_left</span> Anterior
+    </button>
+
+    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage === getTotalPages()"
+      class="pagination-button"
+    >
+      Siguiente <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,119 @@
+/*
+ * Archivo: app.component.css
+ * Descripción: Define los estilos de layout principal para el componente raíz (<app-root>).
+ * Establece la estructura general de la aplicación (header, main content, footer),
+ * gestionando su posicionamiento, dimensiones y adaptabilidad responsiva.
+ */
+
+/* --- 1. Layout Principal de la Aplicación (Host Component) --- */
+/*
+ * El selector `:host` apunta al componente <app-root> en sí.
+ * Configura un layout de columna Flexbox que asegura que el componente
+ * ocupe al menos el 100% de la altura del viewport, permitiendo que
+ * el 'main' crezca y el 'footer' se adhiera al final.
+ */
+:host {
+  display: flex; /* Habilita el modelo de caja flexible */
+  flex-direction: column; /* Organiza los hijos en una columna vertical */
+  min-height: 100vh; /* Asegura que la aplicación ocupe al menos toda la altura de la ventana */
+}
+
+/* --- 2. Estilos para el Header (Posicionamiento Fijo) --- */
+/*
+ * Estiliza el componente <app-header> para que se mantenga fijo
+ * en la parte superior de la ventana, independientemente del scroll.
+ */
+app-header {
+  position: fixed; /* Posiciona el header de forma fija respecto al viewport */
+  top: 0; /* Lo alinea a la parte superior */
+  left: 0; /* Lo alinea a la parte izquierda */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  z-index: 1000; /* Asegura que el header esté por encima de la mayoría de los elementos */
+  height: 70px; /* Define una altura fija para el header */
+}
+
+/* --- 3. Estilos para el Footer --- */
+/*
+ * Estiliza el componente <app-footer>. Su adherencia al final de la página
+ * se logra gracias a la configuración Flexbox en el `:host` y el `flex-grow: 1`
+ * en el `main` central.
+ */
+app-footer {
+  width: 100%; /* El footer ocupa todo el ancho disponible */
+  z-index: 999; /* Ligeramente por debajo del header para evitar solapamiento en ciertos casos */
+  /* Nota: La altura de app-footer es dinámica y se define en su propio archivo de estilos (footer.css) */
+}
+
+/* --- 4. Estilos para el Contenido Principal (<main>) --- */
+/*
+ * Define el área central de la aplicación donde se carga el contenido dinámico
+ * (generalmente a través de <router-outlet>).
+ * Configura su tamaño, centrado, apariencia de "panel" y compensación para el header/footer.
+ */
+main {
+  flex-grow: 1; /* Permite que el 'main' ocupe todo el espacio vertical disponible
+                  entre el header y el footer, empujando al footer hacia abajo. */
+  padding: 30px 20px; /* Padding interno por defecto */
+  max-width: 1200px; /* Ancho máximo para el contenido */
+  width: 90%; /* Ocupa el 90% del ancho disponible (hasta max-width) */
+  background-color: var(--pure-white); /* Color de fondo del panel de contenido */
+  border-radius: 12px; /* Bordes redondeados para el panel */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra para dar efecto de profundidad */
+  animation: fadeIn 0.8s ease-out; /* Aplica una animación de aparición */
+
+  /* Padding superior e inferior para evitar que el contenido sea ocultado por
+     el header fijo y para dejar espacio para el footer. */
+  padding-top: 70px; /* Coincide con la altura de app-header */
+  padding-bottom: 60px; /* Suficiente espacio para el footer */
+
+  margin-left: auto; /* Centra el 'main' horizontalmente */
+  margin-right: auto; /* Centra el 'main' horizontalmente */
+
+  /* Configuración Flexbox para centrar el contenido interno de 'main' si este es corto.
+     Útil si las rutas renderizan directamente contenido que necesita centrado vertical. */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente el contenido dentro de 'main' */
+}
+
+/* --- 5. Animaciones Reutilizables --- */
+/*
+ * Define una animación CSS llamada `fadeIn` que hace que un elemento
+ * aparezca suavemente desde la opacidad 0 y se deslice ligeramente hacia arriba.
+ */
+@keyframes fadeIn {
+  from {
+    opacity: 0; /* Empieza completamente transparente */
+    transform: translateY(20px); /* Empieza 20px más abajo */
+  }
+  to {
+    opacity: 1; /* Termina completamente visible */
+    transform: translateY(0); /* Termina en su posición original */
+  }
+}
+
+/* --- 6. Media Queries para Adaptabilidad Responsiva --- */
+/*
+ * Ajustes de estilos para diferentes tamaños de pantalla,
+ * asegurando una experiencia de usuario óptima en dispositivos móviles y tablets.
+ */
+
+@media (max-width: 768px) {
+  app-header {
+    height: 60px; /* Altura del header reducida para pantallas más pequeñas */
+  }
+  main {
+    width: 95%; /* El contenido principal ocupa más ancho en pantallas medianas */
+    padding-top: 60px; /* Ajusta el padding superior del main a la nueva altura del header */
+    padding-bottom: 50px; /* Ajusta el padding inferior para el footer */
+    padding-left: 15px; /* Ajusta el padding lateral */
+    padding-right: 15px; /* Ajusta el padding lateral */
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding-left: 10px; /* Reduce aún más el padding lateral en móviles pequeños */
+    padding-right: 10px; /* Reduce aún más el padding lateral en móviles pequeños */
+  }
+}

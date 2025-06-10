@@ -1,0 +1,627 @@
+/*
+ * Archivo: crear-pokemon.component.css
+ * Descripción: Estilos específicos para el componente de creación de Pokémon.
+ * Aplica un diseño inspirado en videojuegos, con efectos visuales,
+ * animaciones y un esquema de colores vibrante.
+ */
+
+/* Contenedor principal de la página de creación de Pokémon */
+.create-pokemon-container {
+  padding: 40px 20px; /* Espaciado interno */
+  max-width: 800px; /* Ancho máximo para centrar el contenido */
+  margin: 40px auto; /* Margen superior/inferior y centrado horizontal automático */
+  text-align: center; /* Centra el texto dentro del contenedor */
+  background: var(--background-dark); /* Color de fondo oscuro, tomado de una variable CSS global */
+  border-radius: 20px; /* Esquinas redondeadas */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); /* Sombra exterior para profundidad */
+  font-family: "Press Start 2P", cursive, Arial, sans-serif; /* Fuente tipo "pixel art" */
+  color: var(--text-on-dark-bg); /* Color del texto, tomado de variable global */
+  border: 4px solid var(--border-glow); /* Borde con efecto de "brillo", tomado de variable global */
+  position: relative; /* Necesario para posicionar el pseudo-elemento `::before` */
+  overflow: hidden; /* Oculta cualquier contenido que se desborde */
+  animation: slideInFromTop 0.8s ease-out forwards; /* Animación de entrada al cargar */
+}
+
+/* Keyframes para la animación de entrada del contenedor */
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0; /* Empieza invisible */
+    transform: translateY(-50px); /* Empieza 50px por encima de su posición final */
+  }
+  100% {
+    opacity: 1; /* Termina visible */
+    transform: translateY(0); /* Termina en su posición original */
+  }
+}
+
+/* Pseudo-elemento para añadir un efecto de degradado de fondo en el contenedor */
+.create-pokemon-container::before {
+  content: ""; /* Es necesario para que el pseudo-elemento se muestre */
+  position: absolute; /* Posicionamiento absoluto dentro del contenedor padre */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* Ocupa todo el espacio del contenedor */
+  background: radial-gradient(
+      /* Degradado radial en la esquina superior izquierda */
+      circle at top left,
+      rgba(142, 68, 173, 0.3) 0%, /* Color morado semitransparente */
+      transparent 50%
+    ),
+    radial-gradient(
+      /* Degradado radial en la esquina inferior derecha */
+      circle at bottom right,
+      rgba(220, 53, 69, 0.3) 0%, /* Color rojo semitransparente */
+      transparent 50%
+    );
+  z-index: 0; /* Se asegura de que esté por debajo del contenido principal */
+  pointer-events: none; /* Permite que los eventos de clic pasen a los elementos debajo */
+}
+
+/* Estilos para el título "Crea tu Pokémon" */
+.title {
+  font-size: 2.8em; /* Tamaño de fuente grande */
+  color: var(--primary-red); /* Color rojo primario, de variable global */
+  margin-bottom: 35px; /* Espacio debajo del título */
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* Sombra de texto para contraste */
+  letter-spacing: 3px; /* Espaciado entre letras */
+  text-transform: uppercase; /* Convierte el texto a mayúsculas */
+  position: relative; /* Necesario para que el z-index funcione */
+  z-index: 1; /* Asegura que el título esté por encima del pseudo-elemento de fondo */
+}
+
+/* Panel que contiene el formulario */
+.form-panel {
+  background-color: var(--panel-background); /* Color de fondo del panel, de variable global */
+  border: 3px solid var(--accent-blue); /* Borde azul de acento, de variable global */
+  border-radius: 12px; /* Esquinas redondeadas */
+  padding: 35px; /* Espaciado interno */
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4), 0 8px 25px rgba(0, 0, 0, 0.5); /* Sombras internas y externas */
+  position: relative; /* Necesario para que el z-index funcione */
+  z-index: 1; /* Asegura que el panel esté por encima del pseudo-elemento de fondo */
+}
+
+/* Estilos generales del formulario */
+.pokemon-form {
+  display: flex; /* Utiliza Flexbox para el layout */
+  flex-direction: column; /* Apila los elementos verticalmente */
+  gap: 30px; /* Espacio entre los grupos de formulario */
+}
+
+/* Grupo individual de formulario (label + input/textarea + errores) */
+.form-group {
+  text-align: left; /* Alinea el texto a la izquierda */
+  position: relative; /* Necesario para posicionar mensajes de error absolutos si fuera el caso */
+}
+
+/* Estilos para las etiquetas de los campos del formulario */
+.form-group label {
+  display: block; /* Ocupa todo el ancho disponible */
+  font-size: 1.2em; /* Tamaño de fuente */
+  margin-bottom: 10px; /* Espacio debajo de la etiqueta */
+  color: var(--text-on-dark-bg); /* Color del texto, de variable global */
+  font-weight: bold; /* Texto en negrita */
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 1.2); /* Sombra de texto para visibilidad */
+  letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* Estilos generales para inputs y textareas */
+.game-input,
+.game-textarea {
+  width: calc(100% - 24px); /* Ocupa el 100% del ancho menos el padding horizontal */
+  padding: 14px 12px; /* Espaciado interno */
+  border: 2px solid var(--accent-blue); /* Borde azul, de variable global */
+  border-radius: 10px; /* Esquinas redondeadas */
+  background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente (valor directo para opacidad específica) */
+  color: var(--text-on-dark-bg); /* Color del texto, de variable global */
+  font-size: 1.05em; /* Tamaño de fuente */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4); /* Sombra interior */
+  transition: all 0.3s ease; /* Transición suave para todos los cambios de estilo */
+  font-family: "Press Start 2P", cursive, Arial, sans-serif; /* Fuente retro */
+  -webkit-appearance: none; /* Elimina estilos por defecto de navegadores WebKit */
+  -moz-appearance: none; /* Elimina estilos por defecto de navegadores Mozilla */
+  appearance: none; /* Elimina estilos por defecto del navegador */
+}
+
+/* Estilos para el texto del placeholder en inputs y textareas */
+.game-input::placeholder,
+.game-textarea::placeholder {
+  color: rgba(var(--light-gray), 0.6); /* Color gris claro con opacidad, de variable global */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Sombra de texto para el placeholder */
+}
+
+/* Estilos al enfocar (focus) en inputs y textareas */
+.game-input:focus,
+.game-textarea:focus {
+  border-color: var(--input-focus-border); /* Color de borde al enfocar, de variable global */
+  box-shadow: 0 0 18px rgba(var(--input-focus-border), 0.8), /* Sombra exterior de brillo */
+    inset 0 0 10px rgba(0, 0, 0, 0.6); /* Sombra interior más oscura */
+  outline: none; /* Elimina el contorno de enfoque por defecto del navegador */
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo ligeramente más oscuro al enfocar */
+}
+
+/* Estilos específicos para el textarea */
+.game-textarea {
+  resize: vertical; /* Permite redimensionar solo verticalmente */
+  min-height: 90px; /* Altura mínima */
+  max-height: 180px; /* Altura máxima */
+}
+
+/* Estilos para el contador de caracteres de la descripción */
+.char-counter {
+  font-size: 0.95em; /* Tamaño de fuente */
+  color: var(--text-on-dark-bg); /* Color del texto, de variable global */
+  text-align: right; /* Alinea el texto a la derecha */
+  margin-top: 8px; /* Espacio superior */
+  font-family: Arial, sans-serif; /* Fuente más legible para números */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 1.2); /* Sombra de texto */
+}
+
+/* Estilos para los mensajes de error de validación */
+.error-message {
+  color: var(--error-red); /* Color rojo de error, de variable global */
+  font-size: 0.85em; /* Tamaño de fuente */
+  margin-top: 6px; /* Espacio superior */
+  text-align: left; /* Alinea el texto a la izquierda */
+  font-weight: bold; /* Texto en negrita */
+  font-family: Arial, sans-serif; /* Fuente legible */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Sombra de texto */
+  opacity: 0; /* Invisible al inicio */
+  transform: translateY(-5px); /* Ligeramente desplazado hacia arriba al inicio */
+  animation: fadeInDown 0.3s ease-out forwards; /* Animación de aparición */
+}
+
+/* Keyframes para la animación de aparición de mensajes de error */
+@keyframes fadeInDown {
+  to {
+    opacity: 1; /* Se vuelve visible */
+    transform: translateY(0); /* Vuelve a su posición original */
+  }
+}
+
+/* Alineación de la etiqueta dentro del grupo de selección de tipos */
+.type-selection-group label {
+  text-align: center; /* Centra el texto de la etiqueta */
+  display: block; /* Ocupa todo el ancho disponible */
+}
+
+/* Contenedor de los botones de selección de tipo */
+.type-buttons-container {
+  display: flex; /* Utiliza Flexbox */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan a la siguiente línea */
+  gap: 12px; /* Espacio entre los botones */
+  justify-content: center; /* Centra los botones horizontalmente */
+  margin-top: 20px; /* Espacio superior */
+}
+
+/* Estilos generales para los botones de tipo de Pokémon */
+.pokemon-type-button {
+  --delay: 0ms; /* Variable CSS personalizada para el retardo de animación, sobreescrita por JS */
+  padding: 10px 20px; /* Espaciado interno */
+  border-radius: 30px; /* Bordes muy redondeados (forma de píldora) */
+  font-size: 0.9em; /* Tamaño de fuente */
+  font-weight: bold; /* Texto en negrita */
+  color: var(--dark-gray); /* Color de texto oscuro para contraste, de variable global */
+  border: 2px solid transparent; /* Borde transparente por defecto */
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4); /* Sombra sutil */
+  cursor: pointer; /* Cambia el cursor a un puntero al pasar el ratón */
+  transition: all 0.25s ease, border-color 0.4s ease, box-shadow 0.4s ease,
+    filter 0.4s ease; /* Transiciones suaves para varios efectos */
+  text-transform: capitalize; /* La primera letra de cada palabra en mayúscula */
+  font-family: "Press Start 2P", cursive, Arial, sans-serif; /* Fuente retro */
+  letter-spacing: 0.5px; /* Espaciado entre letras */
+  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  opacity: 0; /* Invisible al inicio */
+  transform: scale(0.8); /* Ligeramente más pequeño al inicio */
+  animation: popIn 0.4s ease-out forwards; /* Animación de aparición y escala */
+  animation-delay: var(--delay); /* Retardo de la animación, controlado por JS */
+}
+
+/* Keyframes para la animación de "pop-in" de los botones de tipo */
+@keyframes popIn {
+  to {
+    opacity: 1; /* Se vuelve visible */
+    transform: scale(1); /* Vuelve a su tamaño original */
+  }
+}
+
+/* Colores de fondo específicos para cada tipo de Pokémon */
+.type-normal { background-color: #a8a878; }
+.type-fire { background-color: #f08030; }
+.type-water { background-color: #6890f0; }
+.type-grass { background-color: #78c850; }
+.type-electric { background-color: #f8d030; }
+.type-ice { background-color: #98d8d8; }
+.type-fighting { background-color: #c03028; }
+.type-poison { background-color: #a040a0; }
+.type-ground { background-color: #e0c068; }
+.type-flying { background-color: #a890f0; }
+.type-psychic { background-color: #f85888; }
+.type-bug { background-color: #a8b820; }
+.type-rock { background-color: #b8a038; }
+.type-ghost { background-color: #705898; }
+.type-dragon { background-color: #7038f8; }
+.type-steel { background-color: #b8b8d0; }
+.type-dark { background-color: #705848; }
+.type-fairy { background-color: #ee99ac; }
+
+/* Estilos al pasar el ratón (hover) sobre los botones de tipo (si no están seleccionados o deshabilitados) */
+.pokemon-type-button:hover:not(.selected):not(.disabled) {
+  transform: translateY(-4px) scale(1.03); /* Ligeramente más grande y elevado */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6); /* Sombra más pronunciada */
+  filter: brightness(1.3); /* Aumenta el brillo */
+  color: var(--dark-gray); /* Mantiene el color de texto oscuro */
+}
+
+/* Estilos para los botones de tipo seleccionados */
+.pokemon-type-button.selected {
+  border-color: var(--selected-border-color); /* Color de borde para el seleccionado, de variable global */
+  box-shadow: 0 0 15px var(--primary-red), /* Sombra exterior roja */
+    0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.7); /* Múltiples sombras para efecto de brillo */
+  transform: scale(1.1); /* Ligeramente más grande */
+  filter: brightness(1.5); /* Aumenta el brillo */
+  position: relative; /* Necesario para z-index */
+  z-index: 2; /* Se coloca por encima de otros botones */
+  color: var(--pure-white); /* Color de texto blanco puro, de variable global */
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9); /* Sombra de texto fuerte */
+}
+
+/* Estilos para los botones de tipo deshabilitados */
+.pokemon-type-button.disabled {
+  opacity: 0.3; /* Transparencia */
+  cursor: not-allowed; /* Cursor de "prohibido" */
+  transform: none; /* Sin transformaciones */
+  box-shadow: none; /* Sin sombra */
+  filter: none; /* Sin filtros de brillo */
+  color: var(--dark-gray); /* Color de texto oscuro */
+}
+
+/* Alineación para el grupo de subida de imagen */
+.image-upload-group {
+  text-align: center; /* Centra el contenido */
+}
+
+/* Contenedor de la vista previa de la imagen */
+.image-preview {
+  width: 180px; /* Ancho fijo */
+  height: 180px; /* Altura fija */
+  border: 3px dashed var(--accent-blue); /* Borde punteado azul, de variable global */
+  border-radius: 12px; /* Esquinas redondeadas */
+  margin: 25px auto 0; /* Margen superior y centrado horizontal */
+  display: flex; /* Utiliza Flexbox para centrar el contenido */
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  overflow: hidden; /* Oculta partes de la imagen que se desborden */
+  background-color: rgba(0, 0, 0, 0.25); /* Fondo semitransparente */
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4); /* Sombra interior */
+  position: relative; /* Necesario para posicionar el mensaje de error */
+  animation: pulseBorder 2s infinite alternate ease-in-out; /* Animación de "pulso" en el borde */
+}
+
+/* Keyframes para la animación de pulso del borde de la vista previa */
+@keyframes pulseBorder {
+  0% {
+    border-color: var(--accent-blue); /* Color de borde inicial */
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(52, 152, 219, 0.5); /* Sombra de brillo azul */
+  }
+  100% {
+    border-color: var(--input-focus-border); /* Color de borde final (amarillo/oro) */
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 221, 87, 0.7); /* Sombra de brillo amarilla/oro */
+  }
+}
+
+/* Estilos para la imagen dentro del contenedor de vista previa */
+.image-preview img {
+  width: 100%; /* Ocupa todo el ancho del contenedor */
+  height: 100%; /* Ocupa toda la altura del contenedor */
+  object-fit: contain; /* Ajusta la imagen dentro del contenedor sin recortar */
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7)); /* Sombra para la imagen */
+  animation: fadeInScale 0.5s ease-out forwards; /* Animación de aparición y escala */
+}
+
+/* Keyframes para la animación de aparición y escala de la imagen */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0; /* Invisible al inicio */
+    transform: scale(0.9); /* Ligeramente más pequeña al inicio */
+  }
+  100% {
+    opacity: 1; /* Visible */
+    transform: scale(1); /* Vuelve a su tamaño original */
+  }
+}
+
+/* Estilos para el estado de placeholder de la vista previa (cuando no hay imagen) */
+.image-preview.placeholder {
+  flex-direction: column; /* Apila el texto y el icono verticalmente */
+  color: var(--text-on-dark-bg); /* Color del texto, de variable global */
+  font-size: 1em; /* Tamaño de fuente */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Sombra de texto */
+}
+
+/* Estilos para el icono del placeholder de imagen */
+.image-preview.placeholder .placeholder-icon {
+  font-size: 3.5em; /* Tamaño grande para el icono */
+  margin-top: 12px; /* Espacio superior */
+  color: rgba(var(--light-gray), 0.6); /* Color gris claro con opacidad, de variable global */
+}
+
+/* Capa de superposición para mensajes de error de imagen */
+.image-error-overlay {
+  position: absolute; /* Posicionamiento absoluto sobre la imagen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Ocupa todo el espacio de la vista previa */
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
+  color: var(--error-red); /* Color de texto rojo de error, de variable global */
+  display: flex; /* Utiliza Flexbox para centrar el texto */
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Centra el texto */
+  font-size: 0.9em; /* Tamaño de fuente */
+  font-family: Arial, sans-serif; /* Fuente legible */
+  padding: 10px; /* Espaciado interno */
+  box-sizing: border-box; /* Asegura que el padding no aumente el tamaño total */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Sombra de texto */
+  animation: fadeIn 0.3s ease-out forwards; /* Animación de aparición */
+}
+
+/* Keyframes para una animación de fundido (fadeIn) */
+@keyframes fadeIn {
+  to {
+    opacity: 1; /* Se vuelve completamente visible */
+  }
+}
+
+/* Contenedor para los botones de acción del formulario */
+.form-actions {
+  display: flex; /* Utiliza Flexbox */
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 25px; /* Espacio entre los botones */
+  margin-top: 40px; /* Espacio superior */
+}
+
+/* Estilos generales para los botones de "juego" (game-button) */
+.game-button {
+  padding: 14px 28px; /* Espaciado interno */
+  border: none; /* Sin borde por defecto */
+  border-radius: 12px; /* Esquinas redondeadas */
+  font-size: 1.15em; /* Tamaño de fuente */
+  font-weight: bold; /* Texto en negrita */
+  cursor: pointer; /* Cambia el cursor a puntero */
+  transition: all 0.3s ease; /* Transición suave para todos los cambios */
+  display: inline-flex; /* Permite alinear el icono y el texto */
+  align-items: center; /* Alinea verticalmente los elementos */
+  gap: 12px; /* Espacio entre el icono y el texto */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4); /* Sombra exterior */
+  text-transform: uppercase; /* Texto en mayúsculas */
+  letter-spacing: 1.5px; /* Espaciado entre letras */
+  font-family: "Press Start 2P", cursive, Arial, sans-serif; /* Fuente retro */
+  color: var(--pure-white); /* Color de texto blanco puro, de variable global */
+  position: relative; /* Necesario para el pseudo-elemento de brillo */
+  overflow: hidden; /* Oculta el pseudo-elemento de brillo cuando está fuera */
+}
+
+/* Pseudo-elemento para el efecto de brillo al pasar el ratón sobre los botones */
+.game-button::before {
+  content: ''; /* Necesario para que el pseudo-elemento se muestre */
+  position: absolute; /* Posicionamiento absoluto */
+  top: -50%;
+  left: -50%; /* Inicia el brillo fuera del botón */
+  width: 200%;
+  height: 200%; /* Tamaño grande para cubrir el botón */
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%); /* Degradado radial blanco semitransparente */
+  transform: rotate(45deg); /* Rotado para un efecto diagonal */
+  opacity: 0; /* Invisible por defecto */
+  transition: opacity 0.3s ease; /* Transición para la opacidad */
+  z-index: 0; /* Asegura que esté por debajo del texto del botón */
+}
+
+/* Al pasar el ratón (hover) sobre el botón, el brillo se vuelve visible */
+.game-button:hover::before {
+  opacity: 1;
+}
+
+/* Estilos para los iconos de Material Design dentro de los botones */
+.game-button .material-icons {
+  font-size: 1.3em; /* Tamaño del icono */
+  z-index: 1; /* Asegura que el icono esté por encima del brillo */
+}
+
+/* Estilos específicos para el botón "Crear Pokémon" */
+.create-button {
+  background-color: var(--success-green); /* Color de fondo verde de éxito, de variable global */
+  border: 3px solid var(--success-green); /* Borde del mismo color */
+}
+
+/* Estilos al pasar el ratón (hover) sobre el botón "Crear" (si no está deshabilitado) */
+.create-button:hover:not(:disabled) {
+  background-color: #26a563; /* Verde ligeramente más oscuro para el hover */
+  transform: translateY(-6px) scale(1.02); /* Se eleva y escala ligeramente */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
+  filter: brightness(1.1); /* Ligeramente más brillante */
+}
+
+/* Estilos para el botón "Crear" cuando está deshabilitado */
+.create-button:disabled {
+  background-color: var(--medium-gray); /* Fondo gris medio, de variable global */
+  border-color: var(--medium-gray); /* Borde gris medio */
+  color: rgba(var(--light-gray), 0.5); /* Texto gris claro con opacidad, de variable global */
+  cursor: not-allowed; /* Cursor de "prohibido" */
+  opacity: 0.7; /* Más transparente */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); /* Sombra sutil */
+  transform: none; /* Sin transformaciones */
+  filter: none; /* Sin filtros de brillo */
+}
+
+/* Estilos específicos para el botón "Limpiar" */
+.clear-button {
+  background-color: var(--accent-blue); /* Color de fondo azul de acento, de variable global */
+  border: 3px solid var(--accent-blue); /* Borde del mismo color */
+}
+
+/* Estilos al pasar el ratón (hover) sobre el botón "Limpiar" */
+.clear-button:hover {
+  background-color: #2779bd; /* Azul ligeramente más oscuro para el hover */
+  transform: translateY(-6px) scale(1.02); /* Se eleva y escala ligeramente */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
+  filter: brightness(1.1); /* Ligeramente más brillante */
+}
+
+/* Estilos para el mensaje de éxito */
+.success-message {
+  margin-top: 35px; /* Espacio superior */
+  padding: 18px 30px; /* Espaciado interno */
+  background-color: var(--success-green); /* Fondo verde de éxito, de variable global */
+  color: var(--pure-white); /* Texto blanco puro, de variable global */
+  border-radius: 12px; /* Esquinas redondeadas */
+  font-size: 1.3em; /* Tamaño de fuente */
+  font-weight: bold; /* Texto en negrita */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Sombra */
+  animation: fadeInOut 4s forwards; /* Animación de aparición y desaparición */
+  position: relative; /* Necesario para posicionar otros elementos si los hubiera */
+  overflow: hidden; /* Oculta cualquier contenido desbordado */
+  display: flex; /* Utiliza Flexbox para alinear contenido */
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  gap: 15px; /* Espacio entre el icono y el texto */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* Sombra de texto */
+}
+
+/* Estilos para el icono dentro del mensaje de éxito */
+.success-message .success-icon {
+  font-size: 1.8em; /* Tamaño grande del icono */
+}
+
+/* Keyframes para la animación de aparición y desaparición del mensaje de éxito */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0; /* Invisible al inicio */
+    transform: translateY(30px); /* Empieza desplazado hacia abajo */
+  }
+  10% {
+    opacity: 1; /* Se vuelve visible rápidamente */
+    transform: translateY(0); /* Vuelve a su posición */
+  }
+  90% {
+    opacity: 1; /* Permanece visible la mayor parte del tiempo */
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0; /* Desaparece al final */
+    transform: translateY(-30px); /* Se desplaza ligeramente hacia arriba al desaparecer */
+  }
+}
+
+/* --- Media Queries para Responsividad --- */
+
+/* Estilos para pantallas con un ancho máximo de 768px (ej. tablets en vertical) */
+@media (max-width: 768px) {
+  .create-pokemon-container {
+    padding: 25px 15px; /* Ajuste del padding */
+    margin: 30px auto; /* Ajuste del margen */
+  }
+  .title {
+    font-size: 2.2em; /* Reducción del tamaño del título */
+    margin-bottom: 25px;
+    letter-spacing: 2px;
+  }
+  .form-panel {
+    padding: 25px; /* Ajuste del padding del panel */
+  }
+  .form-group label {
+    font-size: 1.1em; /* Ajuste del tamaño de la etiqueta */
+  }
+  .game-input,
+  .game-textarea {
+    padding: 12px 10px; /* Ajuste del padding de inputs/textareas */
+    font-size: 1em; /* Ajuste del tamaño de fuente */
+  }
+  .char-counter,
+  .error-message {
+    font-size: 0.8em; /* Reducción del tamaño de fuente para contadores y errores */
+  }
+  .type-buttons-container {
+    gap: 10px; /* Ajuste del espacio entre botones de tipo */
+  }
+  .pokemon-type-button {
+    padding: 9px 18px; /* Ajuste del padding de botones de tipo */
+    font-size: 0.8em; /* Ajuste del tamaño de fuente */
+  }
+  .image-preview {
+    width: 150px; /* Reducción del tamaño de la vista previa */
+    height: 150px;
+  }
+  .image-preview.placeholder .placeholder-icon {
+    font-size: 3em; /* Reducción del tamaño del icono del placeholder */
+  }
+  .game-button {
+    padding: 12px 22px; /* Ajuste del padding de botones de acción */
+    font-size: 1.05em; /* Ajuste del tamaño de fuente */
+    gap: 10px; /* Ajuste del espacio entre icono y texto */
+  }
+  .success-message {
+    font-size: 1.1em; /* Reducción del tamaño de fuente del mensaje de éxito */
+    padding: 15px 20px;
+  }
+  .success-message .success-icon {
+    font-size: 1.5em; /* Reducción del tamaño del icono de éxito */
+  }
+}
+
+/* Estilos para pantallas con un ancho máximo de 480px (ej. móviles) */
+@media (max-width: 480px) {
+  .create-pokemon-container {
+    margin: 15px auto; /* Reducción del margen superior/inferior */
+    border-width: 3px; /* Reducción del grosor del borde */
+  }
+  .title {
+    font-size: 1.8em; /* Mayor reducción del título */
+    letter-spacing: 1px;
+  }
+  .form-panel {
+    padding: 20px; /* Mayor reducción del padding del panel */
+    border-width: 2px;
+  }
+  .form-group {
+    margin-bottom: 20px; /* Reducción del margen entre grupos */
+  }
+  .game-input,
+  .game-textarea {
+    padding: 10px; /* Mayor reducción del padding de inputs/textareas */
+    font-size: 0.9em; /* Mayor reducción del tamaño de fuente */
+  }
+  .error-message {
+    font-size: 0.75em; /* Mayor reducción de los errores */
+  }
+  .pokemon-type-button {
+    padding: 7px 14px; /* Mayor reducción del padding de botones de tipo */
+    font-size: 0.7em; /* Mayor reducción del tamaño de fuente */
+  }
+  .image-preview {
+    width: 120px; /* Mayor reducción del tamaño de la vista previa */
+    height: 120px;
+  }
+  .image-preview.placeholder .placeholder-icon {
+    font-size: 2.8em; /* Mayor reducción del icono del placeholder */
+  }
+  .form-actions {
+    flex-direction: column; /* Apila los botones de acción verticalmente en móviles */
+    gap: 18px; /* Ajuste del espacio entre ellos */
+  }
+  .game-button {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    justify-content: center; /* Centra el contenido (icono + texto) */
+    font-size: 0.95em; /* Ajuste del tamaño de fuente */
+    padding: 12px; /* Ajuste del padding */
+  }
+  .success-message {
+    font-size: 1em; /* Mayor reducción del mensaje de éxito */
+    padding: 12px 15px;
+    gap: 10px;
+  }
+  .success-message .success-icon {
+    font-size: 1.3em; /* Mayor reducción del icono de éxito */
+  }
+}

@@ -1,0 +1,169 @@
+/*
+ * Archivo: inicio.component.css
+ * Descripción: Contiene los estilos visuales y de layout para la página de inicio.
+ * Define la apariencia del contenedor principal, el título, la descripción,
+ * el botón de llamada a la acción y elementos decorativos, incluyendo animaciones
+ * y ajustes responsivos.
+ */
+
+/* --- 1. Estilos del Contenedor Principal (Inicio) --- */
+.inicio-container {
+  text-align: center; /* Centra el texto y los elementos inline/inline-block */
+  padding: 40px 20px; /* Espaciado interno para el contenido */
+  background: linear-gradient(135deg, var(--light-gray) 0%, var(--pure-white) 100%); /* Fondo con gradiente */
+  border-radius: 15px; /* Bordes redondeados */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra suave para un efecto de elevación */
+  max-width: 900px; /* Limita el ancho máximo del contenedor para mejorar la legibilidad */
+  margin: 30px auto; /* Centra el contenedor principal horizontalmente y añade margen vertical */
+  position: relative; /* Establece un contexto de posicionamiento para los elementos absolutos internos */
+  overflow: hidden; /* Recorta cualquier contenido que se desborde del contenedor (especialmente elementos decorativos) */
+  z-index: 1; /* Asegura que este contenedor esté por encima de elementos con z-index menor */
+}
+
+/* --- 2. Estilos del Título Principal (h1) --- */
+h1 {
+  font-size: 2.5em; /* Tamaño de fuente del título */
+  color: var(--primary-red); /* Color principal rojo */
+  margin-bottom: 15px; /* Margen inferior */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para el texto del título */
+  animation: slideInDown 1s ease-out; /* Animación de entrada al cargar la página */
+}
+
+/* --- 3. Estilos del Párrafo de Descripción (.description) --- */
+.description {
+  font-size: 1.1em; /* Tamaño de fuente del párrafo */
+  color: var(--dark-gray); /* Color de texto gris oscuro */
+  line-height: 1.6; /* Altura de línea para mejor legibilidad */
+  max-width: 700px; /* Limita el ancho de la descripción */
+  margin: 0 auto 40px auto; /* Centra la descripción y añade margen inferior */
+  animation: fadeIn 1.8s ease-out; /* Animación de desvanecimiento de entrada */
+}
+
+/* --- 4. Estilos del Botón de Llamada a la Acción (.cta-button) --- */
+.cta-button {
+  background-color: var(--secondary-red); /* Color de fondo del botón */
+  color: var(--pure-white); /* Color del texto del botón */
+  padding: 15px 30px; /* Espaciado interno */
+  font-size: 1.3em; /* Tamaño de fuente del botón */
+  font-weight: bold; /* Texto en negrita */
+  border: none; /* Sin borde */
+  border-radius: 50px; /* Bordes muy redondeados (forma de píldora) */
+  cursor: pointer; /* Cambia el cursor a puntero al pasar por encima */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+  display: inline-flex; /* Permite alinear el texto y el icono verticalmente */
+  align-items: center; /* Centra los ítems verticalmente dentro del flex container */
+  gap: 10px; /* Espacio entre el texto y el icono */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra del botón */
+}
+
+/* Efecto al pasar el ratón sobre el botón de llamada a la acción */
+.cta-button:hover {
+  background-color: var(--primary-red); /* Cambia el color de fondo */
+  transform: translateY(-5px); /* Desplaza el botón ligeramente hacia arriba */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Aumenta la sombra */
+}
+
+/* Estilos para el icono de Material Icons dentro del botón */
+.cta-button .material-icons {
+  font-size: 1.5em; /* Tamaño del icono */
+}
+
+/* --- 5. Elementos Decorativos (Poké Ball y Hoja) --- */
+/* Contenedor de los elementos decorativos posicionados absolutamente */
+.decorative-elements .pokeball-icon {
+  position: absolute; /* Posicionamiento absoluto respecto a .inicio-container */
+  bottom: -20px; /* Posicionado ligeramente fuera del contenedor por abajo */
+  left: -20px; /* Posicionado ligeramente fuera del contenedor por la izquierda */
+  width: 100px; /* Tamaño del icono */
+  opacity: 0.75; /* Ligera transparencia */
+  transform: rotate(20deg); /* Rotación para un efecto visual */
+  z-index: 0; /* Asegura que esté detrás del contenido principal */
+}
+
+.decorative-elements .leaf-icon {
+  position: absolute; /* Posicionamiento absoluto respecto a .inicio-container */
+  top: -10px; /* Posicionado ligeramente fuera del contenedor por arriba */
+  right: -10px; /* Posicionado ligeramente fuera del contenedor por la derecha */
+  width: 80px; /* Tamaño del icono */
+  opacity: 0.75; /* Ligera transparencia */
+  transform: rotate(-30deg); /* Rotación para un efecto visual */
+  z-index: 0; /* Asegura que esté detrás del contenido principal */
+}
+
+/* --- 6. Animaciones Reutilizables --- */
+
+/* Animación de entrada: el elemento "rebota" ligeramente al aparecer */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animación de entrada: el elemento se desliza hacia abajo al aparecer */
+@keyframes slideInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación de entrada: el elemento se desvanece al aparecer */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* --- 7. Media Queries: Adaptación Responsiva para la Página de Inicio --- */
+
+/* Ajustes para pantallas medianas (hasta 768px de ancho) */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.2em; /* Ajusta el tamaño del título principal para pantallas más pequeñas */
+  }
+  .description {
+    font-size: 1em; /* Reduce el tamaño de fuente de la descripción */
+  }
+  .cta-button {
+    padding: 12px 25px; /* Ajusta el padding del botón */
+    font-size: 1.1em; /* Reduce el tamaño de fuente del botón */
+  }
+}
+
+/* Ajustes para pantallas pequeñas (hasta 480px de ancho) */
+
+@media (max-width: 480px) {
+  .inicio-container {
+    padding: 20px 10px;
+    margin: 20px auto;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  .cta-button {
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+  .decorative-elements .pokeball-icon,
+  .decorative-elements .leaf-icon {
+    width: 60px;
+  }
+}

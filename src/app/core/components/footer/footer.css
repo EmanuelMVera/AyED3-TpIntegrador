@@ -1,0 +1,79 @@
+/*
+ * Archivo: footer.component.css
+ * Descripción: Define los estilos visuales y de layout para el componente de pie de página (<app-footer>).
+ * Incluye la apariencia general del footer, la alineación del contenido,
+ * y los estilos de los enlaces de información, con adaptaciones para diferentes tamaños de pantalla.
+ */
+
+/* --- 1. Estilos Base del Pie de Página (<footer>) --- */
+footer {
+  background-color: var(--dark-gray); /* Color de fondo gris oscuro para el footer */
+  color: var(--pure-white); /* Color del texto dentro del footer (blanco puro) */
+  padding: 15px 0; /* Espaciado interno vertical (arriba/abajo), sin padding lateral */
+  text-align: center; /* Centra horizontalmente todo el contenido de texto e inline-block */
+  font-size: 0.85em; /* Tamaño de fuente ligeramente más pequeño que el texto base */
+  border-top: 2px solid var(--primary-red); /* Borde superior rojo vibrante para separar del contenido principal */
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3); /* Sombra hacia arriba para dar efecto de profundidad */
+  width: 100%; /* Asegura que el footer ocupe todo el ancho disponible */
+}
+
+/* --- 2. Contenedor Interno del Contenido del Pie de Página (.footer-content) --- */
+.footer-content {
+  max-width: 1200px; /* Limita el ancho máximo del contenido para mejorar la legibilidad */
+  margin: 0 auto; /* Centra el bloque de contenido horizontalmente dentro del footer */
+  padding: 0 20px; /* Padding horizontal para asegurar espacio en los bordes de la pantalla */
+}
+
+/* --- 3. Estilos de los Párrafos dentro del Pie de Página (.footer-content p) --- */
+.footer-content p {
+  margin: 3px 0; /* Espacio vertical reducido entre los párrafos */
+  line-height: 1.5; /* Altura de línea estándar para buena legibilidad */
+}
+
+/* --- 4. Contenedor de Enlaces del Pie de Página (.footer-links) --- */
+.footer-links {
+  margin: 10px 0; /* Margen vertical para separar los enlaces del texto de copyright */
+}
+
+/* --- 5. Estilos de los Enlaces Individuales dentro del Pie de Página (.footer-links a) --- */
+.footer-links a {
+  color: var(--pure-white); /* Color del texto de los enlaces (blanco) */
+  text-decoration: none; /* Elimina el subrayado por defecto de los enlaces */
+  margin: 0 10px; /* Espacio horizontal entre los enlaces */
+  transition: color 0.3s ease; /* Transición suave para el cambio de color al pasar el ratón */
+  font-size: 0.95em; /* Tamaño de fuente ligeramente más pequeño para los enlaces */
+}
+
+/* Efecto al pasar el ratón sobre los enlaces del pie de página */
+.footer-links a:hover {
+  color: var(--primary-red); /* Cambia el color del texto a rojo vibrante al pasar el ratón */
+  text-decoration: underline; /* Muestra un subrayado al pasar el ratón */
+}
+
+/* --- 6. Media Queries: Adaptación Responsiva para el Footer --- */
+
+/* Ajustes para pantallas medianas (hasta 768px de ancho) */
+@media (max-width: 768px) {
+  .footer-links {
+    display: flex; /* Habilita Flexbox para los enlaces */
+    flex-direction: column; /* Apila los enlaces verticalmente en móviles/tabletas */
+    gap: 5px; /* Espacio vertical entre los enlaces apilados */
+  }
+
+  .footer-links a {
+    margin: 0; /* Elimina el margen horizontal entre enlaces al apilarse */
+    padding: 3px 0; /* Añade un pequeño padding vertical a los enlaces */
+    font-size: 0.9em; /* Reduce ligeramente el tamaño de fuente de los enlaces en móvil */
+  }
+  footer {
+    padding: 10px 0; /* Reduce el padding vertical del footer en móviles */
+    font-size: 0.75em; /* Reduce el tamaño de fuente global del footer en móviles */
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas (hasta 480px de ancho) */
+@media (max-width: 480px) {
+  footer {
+    padding: 8px 0; /* Reduce aún más el padding vertical del footer */
+  }
+}

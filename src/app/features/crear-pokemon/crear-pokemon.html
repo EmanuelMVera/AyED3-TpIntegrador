@@ -1,0 +1,161 @@
+<div class="create-pokemon-container">
+  <h2 class="title">Crea tu Pokémon</h2>
+
+  <div class="form-panel">
+    <form [formGroup]="pokemonForm" (ngSubmit)="onSubmit()" class="pokemon-form">
+      <div class="form-group">
+        <label for="name">Nombre del Pokémon:</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ej: Pikachu, Charizard"
+          class="game-input"
+        />
+        <div
+          *ngIf="pokemonForm.get('name')?.invalid && (pokemonForm.get('name')?.dirty || pokemonForm.get('name')?.touched)"
+          class="error-message"
+        >
+          <span *ngIf="pokemonForm.get('name')?.errors?.['required']">El nombre es requerido.</span>
+          <span *ngIf="pokemonForm.get('name')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+          <span *ngIf="pokemonForm.get('name')?.errors?.['maxlength']">Máximo 20 caracteres.</span>
+          <span *ngIf="pokemonForm.get('name')?.errors?.['pattern']"
+            >Solo letras, números, espacios y guiones.</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group type-selection-group">
+        <label>Elige hasta 2 Tipos:</label>
+        <div class="type-buttons-container">
+          <button
+            type="button"
+            *ngFor="let type of allPokemonTypes; trackBy: trackByType; let i = index"
+            class="pokemon-type-button"
+            [ngClass]="{
+              'selected': isTypeSelected(type),
+              'type-normal': type === 'normal',
+              'type-fire': type === 'fire',
+              'type-water': type === 'water',
+              'type-grass': type === 'grass',
+              'type-electric': type === 'electric',
+              'type-ice': type === 'ice',
+              'type-fighting': type === 'fighting',
+              'type-poison': type === 'poison',
+              'type-ground': type === 'ground',
+              'type-flying': type === 'flying',
+              'type-psychic': type === 'psychic',
+              'type-bug': type === 'bug',
+              'type-rock': type === 'rock',
+              'type-ghost': type === 'ghost',
+              'type-dragon': type === 'dragon',
+              'type-steel': type === 'steel',
+              'type-dark': type === 'dark',
+              'type-fairy': type === 'fairy',
+              'disabled': areMaxTypesSelected() && !isTypeSelected(type)
+            }"
+            (click)="onTypeChange(type)"
+            [disabled]="areMaxTypesSelected() && !isTypeSelected(type)"
+            [style.--delay.ms]="i * 50"
+          >
+            {{ getTranslatedType(type) }}
+          </button>
+        </div>
+        <div
+          *ngIf="pokemonForm.get('types')?.invalid && (pokemonForm.get('types')?.dirty || pokemonForm.get('types')?.touched)"
+          class="error-message"
+        >
+          <span *ngIf="pokemonForm.get('types')?.errors?.['minSelectedCheckboxes']"
+            >Selecciona al menos 1 tipo.</span
+          >
+          <span *ngIf="pokemonForm.get('types')?.errors?.['maxSelectedCheckboxes']"
+            >Máximo 2 tipos.</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descripción:</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Una breve descripción de tu Pokémon..."
+          class="game-textarea"
+        ></textarea>
+        <div class="char-counter">
+          {{ pokemonForm.get('description')?.value?.length || 0 }}/200
+        </div>
+        <div
+          *ngIf="pokemonForm.get('description')?.invalid && (pokemonForm.get('description')?.dirty || pokemonForm.get('description')?.touched)"
+          class="error-message"
+        >
+          <span *ngIf="pokemonForm.get('description')?.errors?.['required']"
+            >La descripción es requerida.</span
+          >
+          <span *ngIf="pokemonForm.get('description')?.errors?.['minlength']"
+            >Mínimo 10 caracteres.</span
+          >
+          <span *ngIf="pokemonForm.get('description')?.errors?.['maxlength']"
+            >Máximo 200 caracteres.</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group image-upload-group">
+        <label for="imageUrl">URL de la Imagen:</label>
+        <input
+          id="imageUrl"
+          type="url"
+          formControlName="imageUrl"
+          placeholder="http://ejemplo.com/pokemon.png"
+          class="game-input"
+        />
+        <div
+          *ngIf="pokemonForm.get('imageUrl')?.invalid && (pokemonForm.get('imageUrl')?.dirty || pokemonForm.get('imageUrl')?.touched)"
+          class="error-message"
+        >
+          <span *ngIf="pokemonForm.get('imageUrl')?.errors?.['required']"
+            >La URL de la imagen es requerida.</span
+          >
+          <span *ngIf="pokemonForm.get('imageUrl')?.errors?.['pattern']"
+            >Formato de URL inválido. Ej: http://ejemplo.com/imagen.png</span
+          >
+        </div>
+
+        <div class="image-preview" *ngIf="previewImageUrl; else placeholderImage">
+          <img
+            [src]="previewImageUrl"
+            alt="Vista previa del Pokémon"
+            (error)="previewImageUrl = null; pokemonForm.get('imageUrl')?.setErrors({'invalidImage': true})"
+          />
+          <div
+            *ngIf="pokemonForm.get('imageUrl')?.errors?.['invalidImage']"
+            class="error-message image-error-overlay"
+          >
+            Error al cargar la imagen. Revise la URL.
+          </div>
+        </div>
+        <ng-template #placeholderImage>
+          <div class="image-preview placeholder">
+            <span>Vista Previa del Pokémon</span>
+            <span class="material-icons placeholder-icon">image</span>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="game-button create-button" [disabled]="pokemonForm.invalid">
+          <span class="material-icons">add_circle</span> Crear Pokémon
+        </button>
+        <button type="button" class="game-button clear-button" (click)="onClear()">
+          <span class="material-icons">refresh</span> Limpiar
+        </button>
+      </div>
+
+      <div *ngIf="showSuccessMessage" class="success-message">
+        <span class="material-icons success-icon">check_circle</span>
+        ¡Pokémon creado con éxito!
+      </div>
+    </form>
+  </div>
+</div>
