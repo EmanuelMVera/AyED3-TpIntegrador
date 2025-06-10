@@ -1,4 +1,3 @@
-```markdown
 # 📚 Mi Pokedex Personal 🚀
 
 ![Pokémon Logo](https://img.icons8.com/color/96/000000/pokemon--v1.png)
@@ -161,5 +160,3 @@ Si tienes alguna pregunta, sugerencia o simplemente quieres contactarme, no dude
 ---
 
 ¡Gracias por visitar Mi Pokedex Personal! Espero que disfrutes explorando y creando.
-
-```
