@@ -23,8 +23,7 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "outputPath": "docs",
-            "baseHref": "/AyED3-TpIntegrador/"
+            "outputPath": "dist/docs",  "baseHref": "/AyED3-TpIntegrador/"
           },
           "configurations": {
             "production": {
