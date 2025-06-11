@@ -22,8 +22,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"],
-            "outputPath": "dist/docs",  "baseHref": "/AyED3-TpIntegrador/"
+            "styles": ["src/styles.css"]
+            // "outputPath" y "baseHref" se han movido al script de package.json
           },
           "configurations": {
             "production": {
