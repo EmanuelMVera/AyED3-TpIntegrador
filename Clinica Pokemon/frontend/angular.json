@@ -21,8 +21,13 @@
                 "output": "/"
               }
             ],
+<<<<<<< HEAD:Clinica Pokemon/frontend/angular.json
             "styles": ["src/styles.css"],
             "outputPath": "docs/browser"
+=======
+            "styles": ["src/styles.css"]
+            // "outputPath" y "baseHref" se han movido al script de package.json
+>>>>>>> d19f43ee832ac97362c23cefc7f503dbbe7ba32b:angular.json
           },
           "configurations": {
             "production": {
@@ -81,6 +86,10 @@
     }
   },
   "cli": {
+<<<<<<< HEAD:Clinica Pokemon/frontend/angular.json
     "analytics": "8c371275-3675-4718-9f50-d733ca127c1f"
+=======
+    "analytics": "026429ea-e8dd-43f3-a85b-472c8e734984"
+>>>>>>> d19f43ee832ac97362c23cefc7f503dbbe7ba32b:angular.json
   }
 }
