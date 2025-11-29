@@ -1,0 +1,34 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './register.html',
+  styleUrl: './register.css',
+})
+export class Register {
+  username: string = '';
+  email: string = '';
+  password: string = '';
+  error: string = '';
+
+  constructor(private authService: AuthService, private router: Router) {}
+
+  register(): void {
+    this.authService.register(this.username, this.email, this.password).subscribe({
+      next: () => {
+        this.router.navigate(['/inicio']);
+      },
+      error: (err) => {
+        console.error('Error al registrar:', err);
+        this.error = err.error?.error || 'Error al crear cuenta';
+      },
+    });
+  }
+}

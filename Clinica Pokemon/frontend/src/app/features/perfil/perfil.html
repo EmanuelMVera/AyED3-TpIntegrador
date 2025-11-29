@@ -1,0 +1,69 @@
+<div class="perfil-container" *ngIf="!loading; else cargando">
+  <h2>Perfil de Entrenador</h2>
+
+  <div *ngIf="user; else errorBlock" class="perfil-card">
+    <img src="/assets/img/pokeball_icon.webp" alt="Avatar" class="avatar" />
+    <h3>{{ user.username }}</h3>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Miembro desde:</strong> {{ user.createdAt | date:'longDate' }}</p>
+
+    <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+    <div class="pokemon-section" *ngIf="user?.Pokemons?.length">
+  <h3>Mis Pokémon</h3>
+
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Buscar Pokémon..."
+    class="search-input"
+  />
+
+  <div class="pokemon-list">
+    <div class="pokemon-card" *ngFor="let p of user.Pokemons | pokemonFilter:searchTerm">
+      <img [src]="p.imageUrl" alt="{{ p.name }}" />
+      <h4>{{ p.name }}</h4>
+      <p>{{ p.types.join(', ') }}</p>
+      <p>{{ p.description }}</p>
+      <div class="actions">
+        <button (click)="editPokemon(p)">Editar</button>
+        <button (click)="deletePokemon(p.id)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="pokemon-list">
+   <div class="pokemon-card" *ngFor="let p of user.Pokemons | pokemonFilter:searchTerm">
+  <img [src]="p.imageUrl" alt="{{ p.name }}" />
+  <h4 *ngIf="!p.editing">{{ p.name }}</h4>
+  <input *ngIf="p.editing" [(ngModel)]="p.name" placeholder="Nombre" />
+
+  <p *ngIf="!p.editing">{{ p.types.join(', ') }}</p>
+  <input *ngIf="p.editing" [(ngModel)]="p.typesString" placeholder="Tipos (coma separados)" />
+
+  <p *ngIf="!p.editing" class="descripcion">{{ p.description }}</p>
+  <textarea *ngIf="p.editing" [(ngModel)]="p.description" placeholder="Descripción"></textarea>
+
+  <div class="actions">
+    <button *ngIf="!p.editing" (click)="startEdit(p)">Editar</button>
+    <button *ngIf="p.editing" (click)="saveEdit(p)">Guardar</button>
+    <button *ngIf="p.editing" (click)="cancelEdit(p)">Cancelar</button>
+    <button *ngIf="!p.editing" (click)="deletePokemon(p.id)">Eliminar</button>
+  </div>
+</div>
+
+  </div> -->
+
+  <button class="pdf-btn" (click)="downloadPDF()">Descargar PDF</button>
+</div>
+
+<p *ngIf="!user?.Pokemons?.length">Aún no has creado ningún Pokémon.</p>
+
+  </div>
+
+  <ng-template #errorBlock>
+    <p class="error">{{ error }}</p>
+  </ng-template>
+</div>
+
+<ng-template #cargando>
+  <div class="loading">Cargando perfil...</div>
+</ng-template>

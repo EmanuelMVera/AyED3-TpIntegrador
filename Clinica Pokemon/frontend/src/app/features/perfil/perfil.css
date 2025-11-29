@@ -1,0 +1,222 @@
+/* --- Contenedor principal --- */
+.perfil-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #fafafa;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+/* --- Encabezado --- */
+.perfil-container h2 {
+  color: #e53935;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* --- Card de usuario --- */
+.perfil-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  border: 3px solid #ef5350;
+  background-color: #fff;
+}
+
+.perfil-card h3 {
+  color: #333;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.perfil-card p {
+  color: #555;
+  font-size: 0.95rem;
+  margin: 0.2rem 0;
+}
+
+.logout-btn {
+  margin-top: 1.5rem;
+  background-color: #ef5350;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c62828;
+  transform: scale(1.05);
+}
+
+/* --- Sección Pokémon --- */
+.pokemon-section {
+  margin-top: 2.5rem;
+  text-align: left;
+}
+
+.pokemon-section h3 {
+  color: #e53935;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #ef5350;
+  outline: none;
+}
+
+/* --- Lista de Pokémon --- */
+.pokemon-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.2rem;
+}
+
+.pokemon-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pokemon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.pokemon-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.pokemon-card h4 {
+  color: #e53935;
+  margin-top: 0.6rem;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+.pokemon-card p {
+  color: #444;
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+}
+
+/* --- Acciones --- */
+.actions {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 0.8rem;
+}
+
+.actions button {
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.actions button:first-child {
+  background-color: #ffb300;
+  color: #fff;
+}
+
+.actions button:first-child:hover {
+  background-color: #f57c00;
+}
+
+.actions button:last-child {
+  background-color: #ef5350;
+  color: #fff;
+}
+
+.actions button:last-child:hover {
+  background-color: #c62828;
+}
+
+/* --- Botón PDF --- */
+.pdf-btn {
+  display: block;
+  margin: 2rem auto 0;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 0.9rem 1.6rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 3px 8px rgba(25, 118, 210, 0.4);
+  transition: all 0.2s ease;
+}
+
+.pdf-btn:hover {
+  background-color: #0d47a1;
+  transform: translateY(-2px);
+}
+
+/* --- Estados --- */
+.error {
+  color: #e53935;
+  font-weight: bold;
+  text-align: center;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2em;
+  color: #666;
+  margin-top: 4rem;
+}
+
+.pokemon-card input,
+.pokemon-card textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.4rem;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.pokemon-card textarea {
+  resize: vertical;
+  min-height: 60px;
+}
