@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, CurrentUser } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,15 +11,17 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './header.css',
 })
 export class Header implements OnInit {
-  isMenuOpen: boolean = false;
+  isMenuOpen = false;
   username: string | null = null;
+  role: string | null = null;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Escucha en tiempo real cambios en el usuario logueado
-    this.authService.currentUser$.subscribe((user) => {
+    // Escuchar cambios del usuario logueado
+    this.authService.currentUser$.subscribe((user: CurrentUser | null) => {
       this.username = user?.username ?? null;
+      this.role = user?.role ?? null;
     });
   }
 
@@ -33,6 +35,11 @@ export class Header implements OnInit {
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  /** Para mostrar opciones de staff/admin en el menú */
+  isStaff(): boolean {
+    return this.authService.isStaff();
   }
 
   logout(): void {

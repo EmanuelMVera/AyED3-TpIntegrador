@@ -241,28 +241,28 @@ export class Pokedex implements OnInit, OnDestroy {
     return `type-${type.toLowerCase()}`; // Convierte el tipo a minúsculas para el nombre de la clase.
   }
 
-  /**
-   * @method deleteUserPokemon
-   * @description Maneja la eliminación de un Pokémon creado por el usuario.
-   * Muestra un cuadro de confirmación y, si se confirma, llama al servicio para eliminar el Pokémon.
-   * @param {Event} event - El objeto de evento del clic. Se usa para detener la propagación.
-   * @param {number} pokemonId - El ID del Pokémon a eliminar.
-   */
-  deleteUserPokemon(event: Event, pokemonId: number): void {
-    event.stopPropagation(); // Detiene la propagación del evento para evitar que el clic voltee la tarjeta.
-    if (confirm('¿Estás seguro de que quieres eliminar este Pokémon?')) {
-      this.pokemonService.deleteUserPokemon(pokemonId).subscribe({
-        next: () => {
-          // No hay necesidad de un console.log aquí en producción.
-          // El servicio ya actualiza allPokemons$ que a su vez refresca la vista.
-        },
-        error: (err) => {
-          // No hay necesidad de un console.error aquí en producción.
-          // Manejo de errores más robusto podría ser mostrar un mensaje al usuario.
-        },
-      });
-    }
-  }
+  // /**
+  //  * @method deleteUserPokemon
+  //  * @description Maneja la eliminación de un Pokémon creado por el usuario.
+  //  * Muestra un cuadro de confirmación y, si se confirma, llama al servicio para eliminar el Pokémon.
+  //  * @param {Event} event - El objeto de evento del clic. Se usa para detener la propagación.
+  //  * @param {number} pokemonId - El ID del Pokémon a eliminar.
+  //  */
+  // deleteUserPokemon(event: Event, pokemonId: number): void {
+  //   event.stopPropagation(); // Detiene la propagación del evento para evitar que el clic voltee la tarjeta.
+  //   if (confirm('¿Estás seguro de que quieres eliminar este Pokémon?')) {
+  //     this.pokemonService.deleteUserPokemon(pokemonId).subscribe({
+  //       next: () => {
+  //         // No hay necesidad de un console.log aquí en producción.
+  //         // El servicio ya actualiza allPokemons$ que a su vez refresca la vista.
+  //       },
+  //       error: (err) => {
+  //         // No hay necesidad de un console.error aquí en producción.
+  //         // Manejo de errores más robusto podría ser mostrar un mensaje al usuario.
+  //       },
+  //     });
+  //   }
+  // }
 
   /**
    * @method trackByPokemonId

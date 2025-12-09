@@ -1,78 +1,113 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
-interface LoginResponse {
-  message: string;
-  token: string;
+export type UserRole = 'OWNER' | 'STAFF' | 'ADMIN';
+
+export interface CurrentUser {
+  id: number;
   username: string;
   email: string;
+  role: UserRole;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  address?: string | null;
 }
 
-interface RegisterResponse {
+export interface AuthResponse {
   message: string;
-  user: {
-    username: string;
-    email: string;
-  };
+  token: string;
+  user: CurrentUser;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:4000/api/auth';
+  // OJO: base de la API, no /auth directo
+  private apiUrl = 'http://localhost:4000/api';
 
-  // BehaviorSubject para emitir estado del usuario logueado
-  private currentUserSubject = new BehaviorSubject<{ username: string | null; email: string | null } | null>(null);
+  private currentUserSubject = new BehaviorSubject<CurrentUser | null>(
+    this.loadUserFromStorage()
+  );
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    // Si hay sesión previa, restaurar
-    const username = localStorage.getItem('username');
-    const email = localStorage.getItem('email');
-    if (username && email) {
-      this.currentUserSubject.next({ username, email });
+  constructor(private http: HttpClient) {}
+
+  // ========= helpers de estado =========
+
+  private loadUserFromStorage(): CurrentUser | null {
+    const raw = localStorage.getItem('currentUser');
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as CurrentUser;
+    } catch {
+      return null;
     }
   }
 
-  /** Registrar usuario */
-  register(username: string, email: string, password: string): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, { username, email, password });
+  private saveSession(token: string, user: CurrentUser) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 
-  /** Iniciar sesión */
-  login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap((res) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('username', res.username);
-          localStorage.setItem('email', res.email);
-          this.currentUserSubject.next({ username: res.username, email: res.email });
-        }
-      })
-    );
-  }
-
-  /** Cerrar sesión */
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('email');
-    this.currentUserSubject.next(null);
-  }
-
-  /** Obtener token */
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  /** Verificar si el usuario está autenticado */
+  getCurrentUser(): CurrentUser | null {
+    return this.currentUserSubject.value;
+  }
+
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
 
-  /** Obtener datos del usuario actual */
-  getCurrentUser(): { username: string | null; email: string | null } | null {
-    return this.currentUserSubject.value;
+  isOwner(): boolean {
+    return this.currentUserSubject.value?.role === 'OWNER';
+  }
+
+  isStaff(): boolean {
+    const role = this.currentUserSubject.value?.role;
+    return role === 'STAFF' || role === 'ADMIN';
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null);
+  }
+
+  // ========= auth calls =========
+
+  /** Login: aquí SÍ actualizamos la sesión */
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password })
+      .pipe(
+        tap((res) => {
+          this.saveSession(res.token, res.user);
+        })
+      );
+  }
+
+  /**
+   * Registrar dueño.
+   * IMPORTANTE: aquí NO tocamos la sesión actual, porque la usa el STAFF.
+   * Sólo devolvemos la respuesta del backend.
+   */
+  registerOwner(payload: {
+    username: string;
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    address?: string;
+  }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
+      `${this.apiUrl}/auth/register`,
+      payload
+    );
   }
 }

@@ -7,72 +7,84 @@
       <span class="bar"></span>
     </button>
 
-  <ul [class.menu-open]="isMenuOpen">
-  <!-- Sección izquierda -->
-  <div class="nav-left">
-    <li>
-      <a
-        routerLink="/inicio"
-        routerLinkActive="active-link"
-        (click)="closeMenu()"
-        >Inicio</a
-      >
-    </li>
-    <li>
-      <a
-        routerLink="/pokedex"
-        routerLinkActive="active-link"
-        (click)="closeMenu()"
-        >Razas Pokémon</a
-      >
-    </li>
-    <!--
-    <li>
-      <a
-        routerLink="/nosotros"
-        routerLinkActive="active-link"
-        (click)="closeMenu()"
-        >Nosotros</a
-      >
-    </li>
-    -->
-  </div>
+    <ul [class.menu-open]="isMenuOpen">
+      <!-- IZQUIERDA -->
+      <div class="nav-left">
+        <li>
+          <a
+            routerLink="/inicio"
+            routerLinkActive="active-link"
+            (click)="closeMenu()"
+            >Inicio</a
+          >
+        </li>
 
-  <!-- Sección derecha -->
-  <div class="nav-right">
-    <ng-container *ngIf="!isAuthenticated(); else loggedIn">
-      <li>
-        <a
-          routerLink="/login"
-          routerLinkActive="active-link"
-          (click)="closeMenu()"
-          >Iniciar sesión</a
-        >
-      </li>
-      <li>
-        <a
-          routerLink="/register"
-          routerLinkActive="active-link"
-          (click)="closeMenu()"
-          >Registrarse</a
-        >
-      </li>
-    </ng-container>
+        <!-- Catálogo de especies (antigua Pokédex) – visible para cualquiera -->
+        <li>
+          <a
+            routerLink="/pokedex"
+            routerLinkActive="active-link"
+            (click)="closeMenu()"
+            >Catálogo de especies</a
+          >
+        </li>
 
-    <ng-template #loggedIn>
-      <li class="username">Hola, {{ username }}</li>
-      <li>
-        <a
-          routerLink="/perfil"
-          routerLinkActive="active-link"
-          (click)="closeMenu()"
-          >Mi cuenta</a
-        >
-      </li>
-      <li><a (click)="logout()" class="logout-link">Cerrar sesión</a></li>
-    </ng-template>
-  </div>
-</ul>
+        <!-- Panel Staff sólo para STAFF / ADMIN -->
+        <li *ngIf="isStaff()">
+          <a
+            routerLink="/panel"
+            routerLinkActive="active-link"
+            (click)="closeMenu()"
+            >Panel de clínica</a
+          >
+        </li>
+      </div>
 
+      <!-- DERECHA -->
+      <div class="nav-right">
+        <!-- No autenticado -->
+        <ng-container *ngIf="!isAuthenticated(); else loggedIn">
+          <li>
+            <a
+              routerLink="/login"
+              routerLinkActive="active-link"
+              (click)="closeMenu()"
+              >Iniciar sesión</a
+            >
+          </li>
+        </ng-container>
+
+        <!-- Autenticado -->
+        <ng-template #loggedIn>
+          <li class="username">
+            Hola, {{ username }}<span *ngIf="role"> ({{ role | lowercase }})</span>
+          </li>
+
+          <!-- Perfil visible para cualquier rol -->
+          <li>
+            <a
+              routerLink="/perfil"
+              routerLinkActive="active-link"
+              (click)="closeMenu()"
+              >Mi perfil</a
+            >
+          </li>
+
+          <!-- Registrar dueño: sólo STAFF -->
+          <li *ngIf="isStaff()">
+            <a
+              routerLink="/register"
+              routerLinkActive="active-link"
+              (click)="closeMenu()"
+              >Registrar cliente</a
+            >
+          </li>
+
+          <li>
+            <a (click)="logout()" class="logout-link">Cerrar sesión</a>
+          </li>
+        </ng-template>
+      </div>
+    </ul>
   </nav>
 </header>

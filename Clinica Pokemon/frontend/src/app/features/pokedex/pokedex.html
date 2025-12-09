@@ -10,7 +10,7 @@
     @section Título
     @description Encabezado principal del componente.
   -->
-  <h2>Pokédex (Primera Generación)</h2>
+  <h2>Razas de Pokemon (Primera Generación)</h2>
 
   <!--
     @section Barra de búsqueda
@@ -53,11 +53,11 @@
         <div class="card-front">
           <span class="pokemon-id">#{{ pokemon.id | number: '3.0' }}</span>
 
-          <!--
+          <!-- 
             @condition *ngIf pokemon.isUserCreated
             @description Muestra botón para eliminar Pokémon si es creado por el usuario.
             @event (click) deleteUserPokemon($event, id) - Elimina el Pokémon.
-          -->
+          
           <button
             *ngIf="pokemon.isUserCreated"
             class="delete-pokemon-button"
@@ -65,7 +65,7 @@
             title="Eliminar Pokémon creado"
           >
             <span class="material-icons">close</span>
-          </button>
+          </button> -->
 
           <img
             [src]="pokemon.imageUrl"

@@ -49,3 +49,9 @@ button {
   color: var(--secondary-red);
   text-decoration: underline;
 }
+
+.success {
+  color: var(--success-green);
+  text-align: center;
+  margin-top: 8px;
+}
