@@ -7,79 +7,72 @@
       <span class="bar"></span>
     </button>
 
-    <ul [class.menu-open]="isMenuOpen">
-      <!-- Sección izquierda -->
-      <div class="nav-left">
-        <li>
-          <a
-            routerLink="/inicio"
-            routerLinkActive="active-link"
-            (click)="closeMenu()"
-            >Inicio</a
-          >
-        </li>
-        <li>
-          <a
-            routerLink="/pokedex"
-            routerLinkActive="active-link"
-            (click)="closeMenu()"
-            >Pokédex</a
-          >
-        </li>
-        <li *ngIf="isAuthenticated()">
-          <a
-            routerLink="/crear-pokemon"
-            routerLinkActive="active-link"
-            (click)="closeMenu()"
-            >Crear Pokémon</a
-          >
-        </li>
-        <li>
-          <a
-            routerLink="/nosotros"
-            routerLinkActive="active-link"
-            (click)="closeMenu()"
-            >Nosotros</a
-          >
-        </li>
-      </div>
+  <ul [class.menu-open]="isMenuOpen">
+  <!-- Sección izquierda -->
+  <div class="nav-left">
+    <li>
+      <a
+        routerLink="/inicio"
+        routerLinkActive="active-link"
+        (click)="closeMenu()"
+        >Inicio</a
+      >
+    </li>
+    <li>
+      <a
+        routerLink="/pokedex"
+        routerLinkActive="active-link"
+        (click)="closeMenu()"
+        >Razas Pokémon</a
+      >
+    </li>
+    <!--
+    <li>
+      <a
+        routerLink="/nosotros"
+        routerLinkActive="active-link"
+        (click)="closeMenu()"
+        >Nosotros</a
+      >
+    </li>
+    -->
+  </div>
 
-      <!-- Sección derecha -->
-      <div class="nav-right">
-        <!-- Si no estás logueado -->
-        <ng-container *ngIf="!isAuthenticated(); else loggedIn">
-          <li>
-            <a
-              routerLink="/login"
-              routerLinkActive="active-link"
-              (click)="closeMenu()"
-              >Iniciar sesión</a
-            >
-          </li>
-          <li>
-            <a
-              routerLink="/register"
-              routerLinkActive="active-link"
-              (click)="closeMenu()"
-              >Registrarse</a
-            >
-          </li>
-        </ng-container>
+  <!-- Sección derecha -->
+  <div class="nav-right">
+    <ng-container *ngIf="!isAuthenticated(); else loggedIn">
+      <li>
+        <a
+          routerLink="/login"
+          routerLinkActive="active-link"
+          (click)="closeMenu()"
+          >Iniciar sesión</a
+        >
+      </li>
+      <li>
+        <a
+          routerLink="/register"
+          routerLinkActive="active-link"
+          (click)="closeMenu()"
+          >Registrarse</a
+        >
+      </li>
+    </ng-container>
 
-        <!-- Si estás logueado -->
-        <ng-template #loggedIn>
-          <li class="username">Hola, {{ username }}</li>
-          <li>
-            <a
-              routerLink="/perfil"
-              routerLinkActive="active-link"
-              (click)="closeMenu()"
-              >Perfil</a
-            >
-          </li>
-          <li><a (click)="logout()" class="logout-link">Cerrar sesión</a></li>
-        </ng-template>
-      </div>
-    </ul>
+    <ng-template #loggedIn>
+      <li class="username">Hola, {{ username }}</li>
+      <li>
+        <a
+          routerLink="/perfil"
+          routerLinkActive="active-link"
+          (click)="closeMenu()"
+          >Mi cuenta</a
+        >
+      </li>
+      <li><a (click)="logout()" class="logout-link">Cerrar sesión</a></li>
+    </ng-template>
+  </div>
+</ul>
+
   </nav>
 </header>

@@ -1,22 +1,133 @@
-<div class="inicio-container">
-  <h1>¡Bienvenido a Pokédex!</h1>
+<div class="inicio-page">
+  <!-- HERO PRINCIPAL -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Clínica Pokémon</h1>
+      <p class="hero-subtitle">
+        Cuidamos la salud de tus compañeros Pokémon con un equipo especializado,
+        tecnología moderna y un seguimiento clínico completo.
+      </p>
 
-  <p class="description">
-    Explora la primera generación de Pokémon, aprende sobre sus tipos,
-    habilidades y características. Crea tus propios Pokémon y expande el
-    universo. ¡Tu aventura comienza aquí!
-  </p>
+      <div class="hero-actions">
+        <button class="btn-primary" routerLink="/pokedex">
+          Ver razas y especies
+          <span class="material-icons">arrow_forward</span>
+        </button>
 
-  <button class="cta-button" routerLink="/pokedex">
-    Explorar Pokédex <span class="material-icons">arrow_forward</span>
-  </button>
+        <button class="btn-outline" routerLink="/login">
+          Acceder a mi cuenta
+        </button>
+      </div>
 
-  <div class="decorative-elements">
-    <img
-      src="assets/img/pokeball_icon.webp"
-      alt="Poké Ball"
-      class="pokeball-icon"
-    />
-    <img src="assets/img/leaf_icon.webp" alt="Hoja" class="leaf-icon" />
-  </div>
+      <p class="hero-note">
+        Dueños registrados pueden consultar el historial clínico de sus
+        Pokémon, actualizar sus datos de contacto y más.
+      </p>
+    </div>
+
+    <div class="hero-illustration">
+      <div class="hero-card">
+        <img
+          src="assets/img/pokeball_icon.webp"
+          alt="Poké Ball"
+          class="hero-pokeball"
+        />
+        <p class="hero-card-title">Emergencias 24/7</p>
+        <p class="hero-card-text">
+          Atención de guardia para casos críticos de tus Pokémon.
+        </p>
+      </div>
+
+      <img
+        src="assets/img/leaf_icon.webp"
+        alt="Elemento decorativo"
+        class="hero-leaf"
+      />
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section class="services">
+    <h2>Nuestros servicios</h2>
+    <p class="section-description">
+      Ofrecemos una atención integral para que tus Pokémon reciban el mejor
+      cuidado posible.
+    </p>
+
+    <div class="services-grid">
+      <article class="service-card">
+        <h3>Consultas generales</h3>
+        <p>
+          Controles de rutina, chequeos de salud y seguimiento de cada especie.
+        </p>
+      </article>
+
+      <article class="service-card">
+        <h3>Urgencias y guardia</h3>
+        <p>Atención inmediata para situaciones críticas las 24 horas.</p>
+      </article>
+
+      <article class="service-card">
+        <h3>Laboratorio y estudios</h3>
+        <p>
+          Análisis, estudios de imagen y pruebas específicas para Pokémon
+          especiales.
+        </p>
+      </article>
+
+      <article class="service-card">
+        <h3>Internación</h3>
+        <p>
+          Espacios preparados para la recuperación segura y supervisada de tus
+          compañeros.
+        </p>
+      </article>
+
+      <article class="service-card">
+        <h3>Seguimiento clínico</h3>
+        <p>
+          Historial médico digital, accesible para el dueño con usuario y
+          contraseña.
+        </p>
+      </article>
+
+      <article class="service-card">
+        <h3>Asesoramiento al dueño</h3>
+        <p>
+          Planes de vacunas, nutrición y cuidados según especie y edad del
+          Pokémon.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- POR QUÉ ELEGIRNOS -->
+  <section class="why-us">
+    <div class="why-text">
+      <h2>¿Por qué elegir nuestra clínica?</h2>
+      <ul>
+        <li>Equipo especializado en fisiología y comportamiento Pokémon.</li>
+        <li>
+          Comunicación clara con los dueños y acceso online al historial
+          clínico.
+        </li>
+        <li>Protocolos de emergencias preparados para múltiples especies.</li>
+      </ul>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">+150</span>
+        <span class="stat-label">Pokémon atendidos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">+50</span>
+        <span class="stat-label">Especies distintas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Emergencias</span>
+      </div>
+    </div>
+  </section>
 </div>

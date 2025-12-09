@@ -1,169 +1,264 @@
-/*
- * Archivo: inicio.component.css
- * Descripción: Contiene los estilos visuales y de layout para la página de inicio.
- * Define la apariencia del contenedor principal, el título, la descripción,
- * el botón de llamada a la acción y elementos decorativos, incluyendo animaciones
- * y ajustes responsivos.
- */
-
-/* --- 1. Estilos del Contenedor Principal (Inicio) --- */
-.inicio-container {
-  text-align: center; /* Centra el texto y los elementos inline/inline-block */
-  padding: 40px 20px; /* Espaciado interno para el contenido */
-  background: linear-gradient(135deg, var(--light-gray) 0%, var(--pure-white) 100%); /* Fondo con gradiente */
-  border-radius: 15px; /* Bordes redondeados */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra suave para un efecto de elevación */
-  max-width: 900px; /* Limita el ancho máximo del contenedor para mejorar la legibilidad */
-  margin: 30px auto; /* Centra el contenedor principal horizontalmente y añade margen vertical */
-  position: relative; /* Establece un contexto de posicionamiento para los elementos absolutos internos */
-  overflow: hidden; /* Recorta cualquier contenido que se desborde del contenedor (especialmente elementos decorativos) */
-  z-index: 1; /* Asegura que este contenedor esté por encima de elementos con z-index menor */
+.inicio-page {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 
-/* --- 2. Estilos del Título Principal (h1) --- */
-h1 {
-  font-size: 2.5em; /* Tamaño de fuente del título */
-  color: var(--primary-red); /* Color principal rojo */
-  margin-bottom: 15px; /* Margen inferior */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para el texto del título */
-  animation: slideInDown 1s ease-out; /* Animación de entrada al cargar la página */
+/* HERO */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+  align-items: center;
+  gap: 2.5rem;
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fdf1f0 35%, #f5f7fb 100%);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
-/* --- 3. Estilos del Párrafo de Descripción (.description) --- */
-.description {
-  font-size: 1.1em; /* Tamaño de fuente del párrafo */
-  color: var(--dark-gray); /* Color de texto gris oscuro */
-  line-height: 1.6; /* Altura de línea para mejor legibilidad */
-  max-width: 700px; /* Limita el ancho de la descripción */
-  margin: 0 auto 40px auto; /* Centra la descripción y añade margen inferior */
-  animation: fadeIn 1.8s ease-out; /* Animación de desvanecimiento de entrada */
+.hero-content h1 {
+  font-size: 2.4rem;
+  color: var(--primary-red);
+  margin-bottom: 0.75rem;
 }
 
-/* --- 4. Estilos del Botón de Llamada a la Acción (.cta-button) --- */
-.cta-button {
-  background-color: var(--secondary-red); /* Color de fondo del botón */
-  color: var(--pure-white); /* Color del texto del botón */
-  padding: 15px 30px; /* Espaciado interno */
-  font-size: 1.3em; /* Tamaño de fuente del botón */
-  font-weight: bold; /* Texto en negrita */
-  border: none; /* Sin borde */
-  border-radius: 50px; /* Bordes muy redondeados (forma de píldora) */
-  cursor: pointer; /* Cambia el cursor a puntero al pasar por encima */
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Transiciones suaves */
-  display: inline-flex; /* Permite alinear el texto y el icono verticalmente */
-  align-items: center; /* Centra los ítems verticalmente dentro del flex container */
-  gap: 10px; /* Espacio entre el texto y el icono */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra del botón */
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
 }
 
-/* Efecto al pasar el ratón sobre el botón de llamada a la acción */
-.cta-button:hover {
-  background-color: var(--primary-red); /* Cambia el color de fondo */
-  transform: translateY(-5px); /* Desplaza el botón ligeramente hacia arriba */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Aumenta la sombra */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
 }
 
-/* Estilos para el icono de Material Icons dentro del botón */
-.cta-button .material-icons {
-  font-size: 1.5em; /* Tamaño del icono */
+.btn-primary,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 0.98rem;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
 }
 
-/* --- 5. Elementos Decorativos (Poké Ball y Hoja) --- */
-/* Contenedor de los elementos decorativos posicionados absolutamente */
-.decorative-elements .pokeball-icon {
-  position: absolute; /* Posicionamiento absoluto respecto a .inicio-container */
-  bottom: -20px; /* Posicionado ligeramente fuera del contenedor por abajo */
-  left: -20px; /* Posicionado ligeramente fuera del contenedor por la izquierda */
-  width: 100px; /* Tamaño del icono */
-  opacity: 0.75; /* Ligera transparencia */
-  transform: rotate(20deg); /* Rotación para un efecto visual */
-  z-index: 0; /* Asegura que esté detrás del contenido principal */
+.btn-primary {
+  background: var(--primary-red);
+  color: var(--pure-white);
+  box-shadow: 0 6px 14px rgba(227, 53, 13, 0.4);
 }
 
-.decorative-elements .leaf-icon {
-  position: absolute; /* Posicionamiento absoluto respecto a .inicio-container */
-  top: -10px; /* Posicionado ligeramente fuera del contenedor por arriba */
-  right: -10px; /* Posicionado ligeramente fuera del contenedor por la derecha */
-  width: 80px; /* Tamaño del icono */
-  opacity: 0.75; /* Ligera transparencia */
-  transform: rotate(-30deg); /* Rotación para un efecto visual */
-  z-index: 0; /* Asegura que esté detrás del contenido principal */
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(227, 53, 13, 0.5);
 }
 
-/* --- 6. Animaciones Reutilizables --- */
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--accent-blue);
+  color: var(--accent-blue);
+}
 
-/* Animación de entrada: el elemento "rebota" ligeramente al aparecer */
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
+.btn-outline:hover {
+  background: var(--accent-blue);
+  color: #fff;
+}
+
+.hero-note {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Hero derecha */
+
+.hero-illustration {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem 1.6rem 1.3rem;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+  position: relative;
+  max-width: 260px;
+}
+
+.hero-pokeball {
+  width: 72px;
+  position: absolute;
+  top: -30px;
+  right: -20px;
+  opacity: 0.9;
+}
+
+.hero-card-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.35rem;
+  color: var(--primary-red);
+}
+
+.hero-card-text {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.hero-leaf {
+  position: absolute;
+  left: -40px;
+  bottom: -35px;
+  width: 120px;
+  opacity: 0.7;
+}
+
+/* SERVICIOS */
+
+.services {
+  padding: 0 0.5rem;
+}
+
+.services h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+  color: var(--dark-gray);
+}
+
+.section-description {
+  font-size: 0.98rem;
+  color: #666;
+  margin-bottom: 1.6rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.3rem;
+}
+
+.service-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1.2rem 1.3rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  border-top: 3px solid var(--primary-red);
+}
+
+.service-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  color: var(--dark-gray);
+}
+
+.service-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* POR QUÉ ELEGIRNOS + STATS */
+
+.why-us {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 0.5rem 0;
+}
+
+.why-text h2 {
+  font-size: 1.7rem;
+  margin-bottom: 0.75rem;
+  color: var(--dark-gray);
+}
+
+.why-text ul {
+  padding-left: 1.1rem;
+}
+
+.why-text li {
+  margin-bottom: 0.5rem;
+  font-size: 0.96rem;
+  color: #555;
+  list-style: disc;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.06);
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-red);
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 2rem 1.5rem;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
+
+  .hero-illustration {
+    order: -1;
   }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    transform: scale(1);
+
+  .why-us {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Animación de entrada: el elemento se desliza hacia abajo al aparecer */
-@keyframes slideInDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
+@media (max-width: 600px) {
+  .hero {
+    padding: 1.8rem 1.2rem;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-/* Animación de entrada: el elemento se desvanece al aparecer */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
+  .hero-content h1 {
+    font-size: 2rem;
   }
-  100% {
-    opacity: 1;
-  }
-}
 
-/* --- 7. Media Queries: Adaptación Responsiva para la Página de Inicio --- */
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-/* Ajustes para pantallas medianas (hasta 768px de ancho) */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2.2em; /* Ajusta el tamaño del título principal para pantallas más pequeñas */
-  }
-  .description {
-    font-size: 1em; /* Reduce el tamaño de fuente de la descripción */
-  }
-  .cta-button {
-    padding: 12px 25px; /* Ajusta el padding del botón */
-    font-size: 1.1em; /* Reduce el tamaño de fuente del botón */
-  }
-}
-
-/* Ajustes para pantallas pequeñas (hasta 480px de ancho) */
-
-@media (max-width: 480px) {
-  .inicio-container {
-    padding: 20px 10px;
-    margin: 20px auto;
-  }
-  h1 {
-    font-size: 1.8em;
-  }
-  .cta-button {
-    font-size: 1em;
-    padding: 10px 20px;
-  }
-  .decorative-elements .pokeball-icon,
-  .decorative-elements .leaf-icon {
-    width: 60px;
+  .btn-primary,
+  .btn-outline {
+    justify-content: center;
+    width: 100%;
   }
 }

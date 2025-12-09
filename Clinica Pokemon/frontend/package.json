@@ -28,11 +28,8 @@
     "@angular/cli": "^20.0.1",
     "@angular/compiler-cli": "^20.0.0",
     "@types/jasmine": "~5.1.0",
-<<<<<<< HEAD:Clinica Pokemon/frontend/package.json
     "angular-cli-ghpages": "^2.0.3",
-=======
     "fs-extra": "^11.3.0",
->>>>>>> d19f43ee832ac97362c23cefc7f503dbbe7ba32b:package.json
     "jasmine-core": "~5.7.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

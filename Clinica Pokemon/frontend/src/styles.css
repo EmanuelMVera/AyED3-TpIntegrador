@@ -1,101 +1,66 @@
-/*
- * Archivo: styles.css
- * Descripción: Define los estilos globales y las variables CSS para la aplicación,
- * estableciendo la paleta de colores, la tipografía base y resets CSS.
- * Estos estilos se aplican a toda la aplicación Angular.
- */
-
-/* --- 1. Variables CSS: Paleta de Colores y Propiedades Temáticas --- */
-/*
- * Define un conjunto de variables CSS que encapsulan la paleta de colores
- * de la aplicación, inspirada en los colores de una Poké Ball y la interfaz
- * de usuario de un videojuego. Esto facilita la consistencia y la gestión
- * de colores en todo el proyecto.
- */
 :root {
-  /* Colores principales inspirados en una Poké Ball moderna y UI de juego */
-  --primary-red: #e3350d; /* Rojo vibrante, similar a un botón de Poké Ball (ej. botones, acentos) */
-  --secondary-red: #ff6e40; /* Rojo más anaranjado para acentos secundarios o estados hover */
-  --pure-white: #ffffff; /* Blanco puro para elementos destacados y texto sobre fondos oscuros */
-  --dark-gray: #2c3e50; /* Azul muy oscuro para texto principal sobre fondos claros y ciertos fondos sutiles */
-  --light-gray: #ecf0f1; /* Blanco hueso para fondos claros y texto sobre elementos oscuros */
-  --medium-gray: #95a5a6; /* Gris intermedio para elementos desactivados o texto secundario */
+  /* Colores principales */
+  --primary-red: #e3350d;
+  --secondary-red: #ff6e40;
+  --pure-white: #ffffff;
+  --dark-gray: #2c3e50;
+  --light-gray: #f5f7fb; /* más claro que antes */
+  --medium-gray: #95a5a6;
 
-  /* Colores de acento y feedback (mensajes al usuario) */
-  --accent-blue: #3498db; /* Azul clásico para enlaces, bordes activos y acentos visuales */
-  --success-green: #2ecc71; /* Verde brillante para mensajes de éxito (ej. formulario enviado) */
-  --error-red: #e74c3c; /* Rojo fuerte para mensajes de error y validaciones fallidas */
-  --warning-yellow: #f1c40f; /* Amarillo para advertencias o información importante */
+  /* Acentos */
+  --accent-blue: #1e88e5;
+  --success-green: #2ecc71;
+  --error-red: #e74c3c;
+  --warning-yellow: #f1c40f;
 
-  /* Colores específicos de fondo y panel (para un look de UI de juego) */
-  --background-dark: #232f3f; /* Fondo muy oscuro, casi negro-azul, para el cuerpo general de la página */
-  --panel-background: #34495e; /* Azul oscuro para los paneles, tarjetas o secciones de formularios */
+  /* Fondos “clínica” */
+  --background-dark: #f5f7fb; /* ahora es fondo claro global */
+  --panel-background: #ffffff;
 
-  /* Colores para efectos de borde y elementos interactivos */
-  --border-glow: var(
-    --primary-red
-  ); /* El rojo primario para efectos de brillo y bordes importantes */
-  --selected-border-color: var(
-    --primary-red
-  ); /* Mantener el rojo primario para bordes de elementos seleccionados */
-  --input-focus-border: #ffdd57; /* Amarillo brillante para el borde de inputs en estado de foco */
-  --text-on-dark-bg: var(
-    --light-gray
-  ); /* Color de texto estándar sobre fondos oscuros */
-  --text-on-light-bg: var(
-    --dark-gray
-  ); /* Color de texto estándar sobre fondos claros */
+  /* Texto */
+  --text-on-dark-bg: var(--dark-gray);
+  --text-on-light-bg: var(--dark-gray);
+
+  --border-glow: var(--primary-red);
+  --selected-border-color: var(--primary-red);
+  --input-focus-border: #ffdd57;
 }
 
-/* --- 2. Estilos Globales para el Cuerpo de la Página (Reset y Base) --- */
-/*
- * Establece los estilos base para el elemento `body`, definiendo la tipografía,
- * el color de fondo y el color de texto por defecto para toda la aplicación.
- */
+/* Global */
 body {
-  font-family: "Inter", sans-serif; /* Define la fuente principal de la aplicación */
-  margin: 0; /* Elimina el margen por defecto del body */
-  background-color: var(
-    --background-dark
-  ); /* Aplica el color de fondo oscuro definido en las variables */
-  color: var(
-    --text-on-dark-bg
-  ); /* Establece el color de texto predeterminado para el fondo oscuro */
-  min-height: 100vh; /* Asegura que el body ocupe al menos el 100% del alto del viewport */
-  overflow-x: hidden; /* Evita el scroll horizontal */
-  overflow-y: auto; /* Permite el scroll vertical si el contenido lo requiere */
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  background-color: var(--background-dark); /* ahora claro */
+  color: var(--text-on-dark-bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-/* --- 3. Resets CSS Básicos para Consistencia de Estilos --- */
-/*
- * Un conjunto de reglas CSS para normalizar el renderizado de elementos
- * en diferentes navegadores, eliminando márgenes, paddings y asegurando
- * que el modelo de caja sea consistente (border-box).
- */
 *,
 *::before,
 *::after {
-  box-sizing: border-box; /* Asegura que el padding y el border se incluyan en el ancho/alto total */
+  box-sizing: border-box;
 }
 
 html,
 body {
-  height: 100%; /* Asegura que html y body ocupen todo el alto disponible */
+  height: 100%;
 }
 
 img {
-  max-width: 100%; /* Las imágenes no excederán el ancho de su contenedor */
-  height: auto; /* Mantiene la proporción de la imagen al redimensionar */
-  display: block; /* Elimina espacio extra debajo de las imágenes (especialmente en líneas) */
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 a {
-  text-decoration: none; /* Elimina el subrayado por defecto de los enlaces */
-  color: inherit; /* Los enlaces heredan el color de texto de su padre */
+  text-decoration: none;
+  color: inherit;
 }
 
 ul {
-  list-style: none; /* Elimina los bullets por defecto de las listas */
-  margin: 0; /* Elimina el margen por defecto de las listas */
-  padding: 0; /* Elimina el padding por defecto de las listas */
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
