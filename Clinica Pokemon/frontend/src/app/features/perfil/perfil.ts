@@ -1,140 +1,101 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
-import { PokemonFilterPipe } from '../../core/pipes/pokemon-filter.pipe';
 
-interface Pokemon {
-  id: number;
-  name: string;
-  imageUrl: string;
-  types: string[];
-  description: string;
-    editing?: boolean;       
-  typesString?: string; 
-}
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  createdAt: string;
-  Pokemons?: Pokemon[];
-}
+import { AuthService, CurrentUser } from '../../core/services/auth.service';
+import { Pet } from '../../core/models/pet.model';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, PokemonFilterPipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.css'],
 })
 export class Perfil implements OnInit {
-  user: User | null = null;
-  error = '';
-  loading = true;
-  searchTerm = '';
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  user = signal<CurrentUser | null>(null);
+  loading = signal(true);
+
+  pets = signal<Pet[]>([]);
+  petsLoading = signal(false);
+  searchTerm = signal('');
+
+  isStaff = computed(() => this.user()?.role === 'STAFF' || this.user()?.role === 'ADMIN');
+  isOwner = computed(() => this.user()?.role === 'OWNER');
+
+  filteredPets = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const list = this.pets();
+
+    if (!term) return list;
+
+    return list.filter((pet) => {
+      const speciesName = pet.Species?.name?.toLowerCase() ?? '';
+      const petName = pet.name?.toLowerCase() ?? '';
+      const types = (pet.Species?.types ?? []).join(' ').toLowerCase();
+      return petName.includes(term) || speciesName.includes(term) || types.includes(term);
+    });
+  });
 
   ngOnInit(): void {
     this.getUserData();
   }
 
-  /** Obtiene los datos del usuario logueado */
   getUserData(): void {
-    this.http.get<User>('http://localhost:4000/api/users/me').subscribe({
+    this.http.get<CurrentUser>('http://localhost:4000/api/users/me').subscribe({
       next: (data) => {
-        this.user = data;
-        this.loading = false;
+        this.user.set(data);
+        this.loading.set(false);
+
+        if (data.role === 'OWNER') {
+          this.loadMyPets();
+        }
       },
-      error: (err) => {
-        console.error('Error al obtener usuario:', err);
-        this.error = 'No se pudieron cargar tus datos.';
-        this.loading = false;
+      error: () => {
+        this.loading.set(false);
       },
     });
   }
 
-  /** Cierra sesión y redirige */
+  loadMyPets(): void {
+    this.petsLoading.set(true);
+    this.http.get<Pet[]>('http://localhost:4000/api/pets/my').subscribe({
+      next: (data) => {
+        this.pets.set(data ?? []);
+        this.petsLoading.set(false);
+      },
+      error: () => {
+        this.pets.set([]);
+        this.petsLoading.set(false);
+      },
+    });
+  }
+
+  downloadPDF(): void {
+    // OWNER únicamente
+    if (!this.isOwner()) return;
+
+    this.http.get('http://localhost:4000/api/users/me/pdf', { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const username = this.user()?.username ?? 'usuario';
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `perfil_${username}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+    });
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  editPokemon(pokemon: any) {
-    this.router.navigate(['/crear-pokemon'], { state: { pokemon } });
-  }
-
-  deletePokemon(id: number) {
-    if (confirm('¿Eliminar este Pokémon?')) {
-      this.http.delete(`http://localhost:4000/api/pokemons/${id}`).subscribe({
-        next: () => {
-          if (this.user) {
-            this.user.Pokemons = this.user.Pokemons?.filter((p) => p.id !== id);
-          }
-        },
-        error: (err) => console.error('Error al eliminar:', err),
-      });
-    }
-  }
-
-  downloadPDF() {
-    const token = this.authService.getToken(); // obtener token del localStorage
-
-    this.http
-      .get('http://localhost:4000/api/users/me/pdf', {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob', // importante: recibimos el PDF como blob
-      })
-      .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'perfil_pokemon.pdf';
-          a.click();
-          window.URL.revokeObjectURL(url);
-        },
-        error: (err) => {
-          console.error('Error al descargar PDF:', err);
-          alert('No se pudo generar el PDF.');
-        },
-      });
-  }
-  startEdit(pokemon: any) {
-    pokemon.editing = true;
-    pokemon.typesString = pokemon.types.join(', ');
-  }
-
-  cancelEdit(pokemon: any) {
-    pokemon.editing = false;
-  }
-
-  saveEdit(pokemon: any) {
-    const updated = {
-      name: pokemon.name,
-      description: pokemon.description,
-      types: pokemon.typesString.split(',').map((t: string) => t.trim()),
-    };
-
-    this.http
-      .put(`http://localhost:4000/api/pokemons/${pokemon.id}`, updated)
-      .subscribe({
-        next: () => {
-          pokemon.editing = false;
-          alert('Pokémon actualizado correctamente');
-        },
-        error: (err) => {
-          console.error('Error al actualizar Pokémon:', err);
-          alert('Error al guardar los cambios.');
-        },
-      });
   }
 }

@@ -12,7 +12,7 @@
 
 /* --- Encabezado --- */
 .perfil-container h2 {
-  color: #e53935;
+  color: #1f3b5b; /* antes #e53935 */
   margin-bottom: 1rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -220,3 +220,11 @@
   resize: vertical;
   min-height: 60px;
 }
+
+.loading-small {
+  text-align: center;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+

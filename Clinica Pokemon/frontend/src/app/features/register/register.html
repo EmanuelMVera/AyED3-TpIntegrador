@@ -1,48 +1,51 @@
 <div class="auth-container">
   <h2>Registrar cliente</h2>
 
-  <form (ngSubmit)="registerOwner()">
+  <form (ngSubmit)="registerOwner()" #registerForm="ngForm">
+    
     <input
       type="text"
-      [(ngModel)]="username"
+      [(ngModel)]="formData.username"
       name="username"
       placeholder="Usuario / alias"
       required
     />
 
-    <input
-      type="text"
-      [(ngModel)]="firstName"
-      name="firstName"
-      placeholder="Nombre"
-      required
-    />
+    <div class="row">
+      <input
+        type="text"
+        [(ngModel)]="formData.firstName"
+        name="firstName"
+        placeholder="Nombre"
+        required
+      />
 
-    <input
-      type="text"
-      [(ngModel)]="lastName"
-      name="lastName"
-      placeholder="Apellido"
-      required
-    />
+      <input
+        type="text"
+        [(ngModel)]="formData.lastName"
+        name="lastName"
+        placeholder="Apellido"
+        required
+      />
+    </div>
 
     <input
       type="tel"
-      [(ngModel)]="phone"
+      [(ngModel)]="formData.phone"
       name="phone"
       placeholder="Teléfono"
     />
 
     <input
       type="text"
-      [(ngModel)]="address"
+      [(ngModel)]="formData.address"
       name="address"
       placeholder="Dirección"
     />
 
     <input
       type="email"
-      [(ngModel)]="email"
+      [(ngModel)]="formData.email"
       name="email"
       placeholder="Correo electrónico"
       required
@@ -50,13 +53,15 @@
 
     <input
       type="password"
-      [(ngModel)]="password"
+      [(ngModel)]="formData.password"
       name="password"
-      placeholder="Contraseña inicial (se la das al cliente)"
+      placeholder="Contraseña inicial"
       required
     />
 
-    <button type="submit">Crear cliente</button>
+    <button type="submit" [disabled]="registerForm.invalid">
+      Crear cliente
+    </button>
 
     <p class="error" *ngIf="error">{{ error }}</p>
     <p class="success" *ngIf="success">{{ success }}</p>

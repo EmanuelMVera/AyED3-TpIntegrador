@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService, CurrentUser } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -10,40 +10,25 @@ import { AuthService, CurrentUser } from '../../services/auth.service';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header implements OnInit {
-  isMenuOpen = false;
-  username: string | null = null;
-  role: string | null = null;
+export class Header {
+  // Inyección moderna
+  public authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private authService: AuthService, private router: Router) {}
-
-  ngOnInit(): void {
-    // Escuchar cambios del usuario logueado
-    this.authService.currentUser$.subscribe((user: CurrentUser | null) => {
-      this.username = user?.username ?? null;
-      this.role = user?.role ?? null;
-    });
-  }
+  // Estado local para el menú UI
+  isMenuOpen = signal(false);
 
   toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+    this.isMenuOpen.update(v => !v);
   }
 
   closeMenu(): void {
-    this.isMenuOpen = false;
-  }
-
-  isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
-  }
-
-  /** Para mostrar opciones de staff/admin en el menú */
-  isStaff(): boolean {
-    return this.authService.isStaff();
+    this.isMenuOpen.set(false);
   }
 
   logout(): void {
     this.authService.logout();
+    this.closeMenu();
     this.router.navigate(['/login']);
   }
 }

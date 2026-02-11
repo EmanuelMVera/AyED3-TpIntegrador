@@ -70,7 +70,7 @@ export async function getPetById(req, res) {
 
     if (!pet) return res.status(404).json({ error: 'Mascota no encontrada' });
 
-    const isStaff = req.userRole === 'staff';
+    const isStaff = req.userRole === 'STAFF';
     const isOwner = Number(pet.ownerId) === Number(req.userId);
 
     if (!isStaff && !isOwner) {
@@ -101,13 +101,13 @@ export async function createPet(req, res) {
       heightCm,
       notes,
       ownerId,
-      pokemonId,
+      speciesId,
     } = req.body;
 
-    if (!name || !ownerId || !pokemonId) {
+    if (!name || !ownerId || !speciesId) {
       return res
         .status(400)
-        .json({ error: 'name, ownerId y pokemonId son obligatorios' });
+        .json({ error: 'name, ownerId y speciesId son obligatorios' });
     }
 
     const pet = await Pet.create({
@@ -118,7 +118,7 @@ export async function createPet(req, res) {
       heightCm,
       notes,
       ownerId,
-      pokemonId,
+      speciesId,
     });
 
     res.status(201).json(pet);
@@ -146,7 +146,7 @@ export async function updatePet(req, res) {
       heightCm,
       notes,
       ownerId,
-      pokemonId,
+      speciesId,
     } = req.body;
 
     if (name !== undefined) pet.name = name;
@@ -156,7 +156,7 @@ export async function updatePet(req, res) {
     if (heightCm !== undefined) pet.heightCm = heightCm;
     if (notes !== undefined) pet.notes = notes;
     if (ownerId !== undefined) pet.ownerId = ownerId;
-    if (pokemonId !== undefined) pet.pokemonId = pokemonId;
+    if (speciesId !== undefined) pet.speciesId = speciesId;
 
     await pet.save();
     res.json({ message: 'Mascota actualizada correctamente', pet });

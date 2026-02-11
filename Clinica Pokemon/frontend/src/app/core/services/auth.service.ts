@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 export type UserRole = 'OWNER' | 'STAFF' | 'ADMIN';
 
@@ -18,28 +18,41 @@ export interface CurrentUser {
 export interface AuthResponse {
   message: string;
   token: string;
-  user: CurrentUser;
+  id: number;
+  username: string;
+  email: string;
+  role: UserRole;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  address?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // OJO: base de la API, no /auth directo
+  private http = inject(HttpClient);
   private apiUrl = 'http://localhost:4000/api';
 
-  private currentUserSubject = new BehaviorSubject<CurrentUser | null>(
-    this.loadUserFromStorage()
-  );
-  currentUser$ = this.currentUserSubject.asObservable();
+  // --- Estado con Signals ---
+  // Inicializamos directamente leyendo de Storage
+  private _currentUser = signal<CurrentUser | null>(this.loadUserFromStorage());
 
-  constructor(private http: HttpClient) {}
+  // Exposición pública
+  public currentUser = this._currentUser.asReadonly();
 
-  // ========= helpers de estado =========
+  // Signals computadas (reemplazan a los métodos isOwner, isStaff, etc.)
+  public isAuthenticated = computed(() => !!this._currentUser());
+  public isOwner = computed(() => this._currentUser()?.role === 'OWNER');
+  public isStaff = computed(() => {
+    const role = this._currentUser()?.role;
+    return role === 'STAFF' || role === 'ADMIN';
+  });
 
   private loadUserFromStorage(): CurrentUser | null {
     const raw = localStorage.getItem('currentUser');
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as CurrentUser;
+      return JSON.parse(raw);
     } catch {
       return null;
     }
@@ -48,66 +61,58 @@ export class AuthService {
   private saveSession(token: string, user: CurrentUser) {
     localStorage.setItem('token', token);
     localStorage.setItem('currentUser', JSON.stringify(user));
-    this.currentUserSubject.next(user);
+    this._currentUser.set(user); // Actualizamos la señal
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  getCurrentUser(): CurrentUser | null {
-    return this.currentUserSubject.value;
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.getToken();
-  }
-
-  isOwner(): boolean {
-    return this.currentUserSubject.value?.role === 'OWNER';
-  }
-
-  isStaff(): boolean {
-    const role = this.currentUserSubject.value?.role;
-    return role === 'STAFF' || role === 'ADMIN';
-  }
-
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+    this._currentUser.set(null);
   }
 
-  // ========= auth calls =========
-
-  /** Login: aquí SÍ actualizamos la sesión */
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(
         tap((res) => {
-          this.saveSession(res.token, res.user);
+          const user: CurrentUser = {
+            id: res.id,
+            username: res.username,
+            email: res.email,
+            role: res.role,
+            firstName: res.firstName ?? null,
+            lastName: res.lastName ?? null,
+            phone: res.phone ?? null,
+            address: res.address ?? null,
+          };
+
+          this.saveSession(res.token, user);
         })
       );
   }
 
-  /**
-   * Registrar dueño.
-   * IMPORTANTE: aquí NO tocamos la sesión actual, porque la usa el STAFF.
-   * Sólo devolvemos la respuesta del backend.
-   */
-  registerOwner(payload: {
-    username: string;
-    email: string;
-    password: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-    address?: string;
-  }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
-      `${this.apiUrl}/auth/register`,
-      payload
-    );
+  registerOwner(payload: any): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/auth/register`, payload)
+      .pipe(
+        tap((res) => {
+          const user: CurrentUser = {
+            id: res.id,
+            username: res.username,
+            email: res.email,
+            role: res.role,
+            firstName: res.firstName ?? null,
+            lastName: res.lastName ?? null,
+            phone: res.phone ?? null,
+            address: res.address ?? null,
+          };
+
+          this.saveSession(res.token, user);
+        })
+      );
   }
 }
