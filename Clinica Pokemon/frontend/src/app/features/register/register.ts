@@ -33,22 +33,38 @@ export class Register {
     };
   }
 
-  registerOwner(): void {
-    this.error = '';
-    this.success = '';
+  // registerOwner(): void {
+    // this.error = '';
+    // this.success = '';
 
-    this.authService.registerOwner(this.formData).subscribe({
-      next: () => {
-        this.success = 'Cliente creado correctamente.';
-        this.formData = this.getInitialFormData(); // Reset total en una línea
+    // this.authService.registerOwner(this.formData).subscribe({
+      // next: () => {
+        // this.success = 'Cliente creado correctamente.';
+        // this.formData = this.getInitialFormData(); // Reset total en una línea
         
-        // Descomentar si deseas redirigir:
-        // this.router.navigate(['/panel']);
-      },
-      error: (err) => {
-        console.error('Error al registrar dueño:', err);
-        this.error = err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
-      },
-    });
-  }
+        // // Descomentar si deseas redirigir:
+        // // this.router.navigate(['/panel']);
+      // },
+      // error: (err) => {
+        // console.error('Error al registrar dueño:', err);
+        // this.error = err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
+      // },
+    // });
+  // }
+  registerOwner(): void {
+  this.error = '';
+  this.success = '';
+
+  this.authService.registerOwnerAsStaff(this.formData).subscribe({
+    next: () => {
+      this.success = 'Cliente creado correctamente.';
+      this.formData = this.getInitialFormData();
+    },
+    error: (err) => {
+      console.error('Error al registrar dueño:', err);
+      this.error = err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
+    },
+  });
+}
+
 }

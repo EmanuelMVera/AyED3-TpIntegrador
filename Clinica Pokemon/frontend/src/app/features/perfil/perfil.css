@@ -12,7 +12,7 @@
 
 /* --- Encabezado --- */
 .perfil-container h2 {
-  color: #1f3b5b; /* antes #e53935 */
+  color: #1f3b5b;
   margin-bottom: 1rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -67,10 +67,11 @@
   transform: scale(1.05);
 }
 
-/* --- Sección Pokémon --- */
+/* --- Sección mascotas --- */
 .pokemon-section {
   margin-top: 2.5rem;
   text-align: left;
+  width: 100%;
 }
 
 .pokemon-section h3 {
@@ -95,7 +96,7 @@
   outline: none;
 }
 
-/* --- Lista de Pokémon --- */
+/* --- Lista --- */
 .pokemon-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -108,12 +109,6 @@
   padding: 1rem;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.pokemon-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
 
 .pokemon-card img {
@@ -135,39 +130,19 @@
   margin: 0.3rem 0;
 }
 
-/* --- Acciones --- */
-.actions {
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 0.8rem;
-}
-
-.actions button {
+.history-btn {
+  margin-top: 0.6rem;
   border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-weight: 600;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.55rem 0.8rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-.actions button:first-child {
-  background-color: #ffb300;
-  color: #fff;
-}
-
-.actions button:first-child:hover {
-  background-color: #f57c00;
-}
-
-.actions button:last-child {
-  background-color: #ef5350;
-  color: #fff;
-}
-
-.actions button:last-child:hover {
-  background-color: #c62828;
+.history-btn:hover {
+  background: #0d47a1;
 }
 
 /* --- Botón PDF --- */
@@ -191,6 +166,58 @@
   transform: translateY(-2px);
 }
 
+/* --- Modal historial --- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.55);
+  display: grid;
+  place-items: center;
+  z-index: 3000;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: min(500px, 96vw);
+  background: #fff;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+}
+
+.modal-lg {
+  width: min(860px, 96vw);
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.record-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.8rem;
+  background: #fafafa;
+  margin-top: 0.7rem;
+}
+
+.record-card p {
+  margin: 0.2rem 0;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.secondary-btn {
+  border: none;
+  background: #4b5563;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+}
+
 /* --- Estados --- */
 .error {
   color: #e53935;
@@ -205,26 +232,14 @@
   margin-top: 4rem;
 }
 
-.pokemon-card input,
-.pokemon-card textarea {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 0.4rem;
-  font-size: 0.9rem;
-  margin-top: 0.4rem;
-  margin-bottom: 0.4rem;
-}
-
-.pokemon-card textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
 .loading-small {
   text-align: center;
   color: #666;
   margin-bottom: 1rem;
 }
 
-
+.empty-msg {
+  text-align: center;
+  color: #666;
+  margin-top: 0.8rem;
+}

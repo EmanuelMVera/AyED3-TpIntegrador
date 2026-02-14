@@ -11,14 +11,24 @@ import {
 
 const router = express.Router();
 
+// function requireStaff(req, res, next) {
+  // if (req.userRole !== 'staff') {
+    // return res
+      // .status(403)
+      // .json({ error: 'Acceso restringido: sólo personal de la clínica.' });
+  // }
+  // next();
+// }
 function requireStaff(req, res, next) {
-  if (req.userRole !== 'staff') {
+  const isStaff = req.userRole === 'STAFF' || req.userRole === 'ADMIN';
+  if (!isStaff) {
     return res
       .status(403)
       .json({ error: 'Acceso restringido: sólo personal de la clínica.' });
   }
   next();
 }
+
 
 // Dueño autenticado → sus mascotas
 router.get('/my', verifyToken, getMyPets);

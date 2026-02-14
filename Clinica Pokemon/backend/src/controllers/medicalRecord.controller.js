@@ -4,11 +4,11 @@ import { Pokemon } from '../models/Pokemon.js';
 import { User } from '../models/User.js';
 
 function isStaff(req) {
-  return req.userRole === 'staff';
+  return req.userRole === 'STAFF' || req.userRole === 'ADMIN';
 }
 
 /**
- * Listar TODAS las historias clínicas (sólo staff)
+ * Listar TODAS las historias clínicas (sólo staff/admin)
  * GET /api/records
  */
 export async function getAllRecords(req, res) {
@@ -36,7 +36,7 @@ export async function getAllRecords(req, res) {
         {
           model: User,
           as: 'Vet',
-          attributes: ['id', 'name', 'email'],
+          attributes: ['id', 'username', 'email'],
         },
       ],
       order: [['date', 'DESC']],
@@ -51,7 +51,7 @@ export async function getAllRecords(req, res) {
 
 /**
  * Historias clínicas de una mascota concreta
- *  - staff: ve todas
+ *  - staff/admin: ve todas
  *  - owner: ve sólo las visibleToOwner
  * GET /api/records/pet/:petId
  */
@@ -73,11 +73,8 @@ export async function getRecordsByPet(req, res) {
         .json({ error: 'No tienes acceso al historial de esta mascota' });
     }
 
-    const where = { petId };
-    if (!staff) {
-      // Dueño → sólo lo marcado como visible
-      where.visibleToOwner = true;
-    }
+    const where = { petId: Number(petId) };
+    if (!staff) where.visibleToOwner = true;
 
     const records = await MedicalRecord.findAll({
       where,
@@ -85,7 +82,7 @@ export async function getRecordsByPet(req, res) {
         {
           model: User,
           as: 'Vet',
-          attributes: ['id', 'name', 'email'],
+          attributes: ['id', 'username', 'email'],
         },
       ],
       order: [['date', 'DESC']],
@@ -100,7 +97,7 @@ export async function getRecordsByPet(req, res) {
 
 /**
  * Detalle de una historia clínica
- *  - staff: ve todo
+ *  - staff/admin: ve todo
  *  - owner: sólo si la mascota es suya y visibleToOwner = true
  * GET /api/records/:id
  */
@@ -125,7 +122,7 @@ export async function getRecordById(req, res) {
         {
           model: User,
           as: 'Vet',
-          attributes: ['id', 'name', 'email'],
+          attributes: ['id', 'username', 'email'],
         },
       ],
     });
@@ -138,12 +135,10 @@ export async function getRecordById(req, res) {
     const owner =
       record.Pet && Number(record.Pet.ownerId) === Number(req.userId);
 
-    if (!staff) {
-      if (!owner || !record.visibleToOwner) {
-        return res
-          .status(403)
-          .json({ error: 'No tienes acceso a esta historia clínica' });
-      }
+    if (!staff && (!owner || !record.visibleToOwner)) {
+      return res
+        .status(403)
+        .json({ error: 'No tienes acceso a esta historia clínica' });
     }
 
     res.json(record);
@@ -155,10 +150,10 @@ export async function getRecordById(req, res) {
 
 /**
  * Crear historia clínica para una mascota
- *  - sólo staff
+ *  - sólo staff/admin
  * POST /api/records/pet/:petId
  * body:
- *  { title, description, weightKg?, notesForOwner?, internalNotes?, visibleToOwner? }
+ * { title, description, weightKg?, notesForOwner?, internalNotes?, visibleToOwner? }
  */
 export async function createRecordForPet(req, res) {
   try {
@@ -169,8 +164,14 @@ export async function createRecordForPet(req, res) {
     }
 
     const { petId } = req.params;
-    const { title, description, weightKg, notesForOwner, internalNotes, visibleToOwner } =
-      req.body;
+    const {
+      title,
+      description,
+      weightKg,
+      notesForOwner,
+      internalNotes,
+      visibleToOwner,
+    } = req.body;
 
     if (!title || !description) {
       return res
@@ -185,12 +186,12 @@ export async function createRecordForPet(req, res) {
 
     const record = await MedicalRecord.create({
       petId: pet.id,
-      vetId: req.userId, // staff que atiende
-      title,
-      description,
+      vetId: req.userId,
+      title: String(title).trim(),
+      description: String(description).trim(),
       weightKg: weightKg ?? null,
-      notesForOwner: notesForOwner ?? null,
-      internalNotes: internalNotes ?? null,
+      notesForOwner: notesForOwner?.trim() || null,
+      internalNotes: internalNotes?.trim() || null,
       visibleToOwner:
         typeof visibleToOwner === 'boolean' ? visibleToOwner : true,
     });
@@ -204,7 +205,7 @@ export async function createRecordForPet(req, res) {
 
 /**
  * Actualizar historia clínica
- *  - sólo staff
+ *  - sólo staff/admin
  * PUT /api/records/:id
  */
 export async function updateRecord(req, res) {
@@ -232,12 +233,16 @@ export async function updateRecord(req, res) {
       date,
     } = req.body;
 
-    if (title !== undefined) record.title = title;
-    if (description !== undefined) record.description = description;
-    if (weightKg !== undefined) record.weightKg = weightKg;
-    if (notesForOwner !== undefined) record.notesForOwner = notesForOwner;
-    if (internalNotes !== undefined) record.internalNotes = internalNotes;
-    if (visibleToOwner !== undefined) record.visibleToOwner = visibleToOwner;
+    if (title !== undefined) record.title = String(title).trim();
+    if (description !== undefined)
+      record.description = String(description).trim();
+    if (weightKg !== undefined) record.weightKg = weightKg ?? null;
+    if (notesForOwner !== undefined)
+      record.notesForOwner = notesForOwner ?? null;
+    if (internalNotes !== undefined)
+      record.internalNotes = internalNotes ?? null;
+    if (visibleToOwner !== undefined)
+      record.visibleToOwner = Boolean(visibleToOwner);
     if (date !== undefined) record.date = date;
 
     await record.save();
@@ -251,7 +256,7 @@ export async function updateRecord(req, res) {
 
 /**
  * Eliminar historia clínica
- *  - sólo staff
+ *  - sólo staff/admin
  * DELETE /api/records/:id
  */
 export async function deleteRecord(req, res) {

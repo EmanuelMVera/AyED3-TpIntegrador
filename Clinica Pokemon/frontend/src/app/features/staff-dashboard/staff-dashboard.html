@@ -1,12 +1,270 @@
 <div class="staff-dashboard">
-  <h2>Panel de la clínica</h2>
-  <p>
-    Aquí vamos a poner:
-  </p>
-  <ul>
-    <li>Listado de clientes (owners) con buscador.</li>
-    <li>Acceso a ficha de cada paciente.</li>
-    <li>Acciones rápidas (nueva mascota, nuevo historial, etc.).</li>
-  </ul>
-</div>
+  <h2>Panel de clínica</h2>
 
+  <p class="error" *ngIf="error()">{{ error() }}</p>
+  <p class="success" *ngIf="success()">{{ success() }}</p>
+
+  <div *ngIf="loading()" class="loading">Cargando panel...</div>
+
+  <div class="layout" *ngIf="!loading()">
+    <!-- Columna Owners -->
+    <section class="owners-panel">
+      <h3>Clientes (owners)</h3>
+
+      <input
+        type="text"
+        [ngModel]="searchOwner()"
+        (ngModelChange)="searchOwner.set($event)"
+        placeholder="Buscar por usuario, nombre o email..."
+      />
+
+      <div class="owners-list">
+        <button
+          *ngFor="let owner of filteredOwners()"
+          (click)="selectOwner(owner.id)"
+          [class.active]="owner.id === selectedOwnerId()"
+          class="owner-item"
+        >
+          <strong>{{ owner.username }}</strong>
+          <small>{{ owner.email }}</small>
+        </button>
+      </div>
+    </section>
+
+    <!-- Columna detalle -->
+    <section
+      class="detail-panel"
+      *ngIf="selectedOwner() as owner; else noOwner"
+    >
+      <h3>Ficha de {{ owner.username }}</h3>
+      <p>
+        <strong>Email:</strong> {{ owner.email }} · <strong>Tel:</strong>
+        {{ owner.phone || '—' }}
+      </p>
+
+      <div class="pet-form">
+        <h4>{{ petForm().id ? 'Editar mascota' : 'Alta de mascota' }}</h4>
+
+        <div class="row">
+          <input
+            type="text"
+            [ngModel]="petForm().name"
+            (ngModelChange)="onPetNameChange($event)"
+            placeholder="Nombre de la mascota"
+          />
+
+          <select
+            [ngModel]="petForm().speciesId"
+            (ngModelChange)="onSpeciesChange($event)"
+          >
+            <option [ngValue]="null">Seleccionar especie...</option>
+            <option *ngFor="let s of species()" [ngValue]="s.id">
+              {{ s.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="row">
+          <input
+            type="date"
+            [ngModel]="petForm().birthDate"
+            (ngModelChange)="onBirthDateChange($event)"
+          />
+
+          <div class="sex-field">
+            <label for="pet-sex">Sexo</label>
+            <select
+              id="pet-sex"
+              [ngModel]="petForm().sex"
+              (ngModelChange)="onSexChange($event)"
+            >
+              <option [ngValue]="'UNKNOWN'">Desconocido</option>
+              <option [ngValue]="'M'">Macho</option>
+              <option [ngValue]="'F'">Hembra</option>
+            </select>
+          </div>
+
+          <input
+            type="number"
+            step="0.1"
+            [ngModel]="petForm().weightKg"
+            (ngModelChange)="onWeightChange($event)"
+            placeholder="Peso (kg)"
+          />
+        </div>
+
+        <textarea
+          [ngModel]="petForm().notes"
+          (ngModelChange)="onNotesChange($event)"
+          placeholder="Notas clínicas iniciales"
+        ></textarea>
+
+        <div class="form-actions">
+          <button (click)="savePet()" [disabled]="savingPet()">
+            {{ petForm().id ? 'Guardar cambios' : 'Crear mascota' }}
+          </button>
+          <button type="button" class="secondary" (click)="resetPetForm()">
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      <h4 class="pets-title">Mascotas registradas</h4>
+      <div class="pets-grid">
+        <article class="pet-card" *ngFor="let pet of petsOfSelectedOwner()">
+          <h5>{{ pet.name }}</h5>
+          <p><strong>Especie:</strong> {{ getSpeciesName(pet.speciesId) }}</p>
+          <p><strong>Sexo:</strong> {{ formatSex(pet.sex) }}</p>
+          <p><strong>Peso:</strong> {{ pet.weightKg ?? '—' }} kg</p>
+          <p *ngIf="pet.notes"><strong>Notas:</strong> {{ pet.notes }}</p>
+
+          <div class="card-actions">
+            <button (click)="startEditPet(pet)">Editar</button>
+            <button class="danger" (click)="deletePet(pet)">Eliminar</button>
+          </div>
+
+          <div class="card-actions" style="margin-top: 0.4rem">
+            <button (click)="openMedicalHistory(pet)">Historial médico</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <ng-template #noOwner>
+      <section class="detail-panel">
+        <p>No hay owners para mostrar.</p>
+      </section>
+    </ng-template>
+  </div>
+
+  <!-- Modal confirmación eliminar -->
+  <div class="modal-backdrop" *ngIf="deleteModalOpen()">
+    <div class="modal-card">
+      <h4>Confirmar eliminación</h4>
+      <p>
+        ¿Seguro que querés eliminar a
+        <strong>{{ petToDelete()?.name }}</strong>? Esta acción no se puede
+        deshacer.
+      </p>
+      <div class="modal-actions">
+        <button class="secondary" (click)="cancelDelete()">Cancelar</button>
+        <button class="danger" (click)="confirmDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal historial médico -->
+  <div
+    class="modal-backdrop"
+    *ngIf="historyModalOpen() && selectedPetForRecord() as pet"
+  >
+    <div class="modal-card modal-lg">
+      <h4>Historial médico · {{ pet.name }}</h4>
+
+      <div class="pet-form" style="margin-top: 0.8rem">
+        <h5>Nuevo informe</h5>
+
+        <div class="row">
+          <input
+            type="text"
+            [ngModel]="recordForm().title"
+            (ngModelChange)="onRecordTitleChange($event)"
+            placeholder="Asunto / título"
+          />
+
+          <input
+            type="number"
+            step="0.1"
+            [ngModel]="recordForm().weightKg"
+            (ngModelChange)="onRecordWeightChange($event)"
+            placeholder="Peso (kg)"
+          />
+
+          <label class="record-visible">
+            <input
+              type="checkbox"
+              [ngModel]="recordForm().visibleToOwner"
+              (ngModelChange)="onRecordVisibleChange($event)"
+            />
+            Visible para dueño
+          </label>
+        </div>
+
+        <textarea
+          [ngModel]="recordForm().description"
+          (ngModelChange)="onRecordDescriptionChange($event)"
+          placeholder="Detalle clínico"
+        ></textarea>
+
+        <textarea
+          [ngModel]="recordForm().notesForOwner"
+          (ngModelChange)="onRecordNotesForOwnerChange($event)"
+          placeholder="Notas para el dueño (lo que verá en su perfil/PDF)"
+        ></textarea>
+
+        <textarea
+          [ngModel]="recordForm().internalNotes"
+          (ngModelChange)="onRecordInternalNotesChange($event)"
+          placeholder="Notas internas (solo staff)"
+        ></textarea>
+
+        <div class="form-actions">
+          <button (click)="saveRecord()" [disabled]="savingRecord()">
+            Guardar informe
+          </button>
+          <button type="button" class="secondary" (click)="resetRecordForm()">
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      <h5 style="margin-top: 1rem">Informes registrados</h5>
+
+      <p *ngIf="recordsLoading()">Cargando historial...</p>
+
+      <div *ngIf="!recordsLoading()">
+        <article
+          class="pet-card record-card"
+          *ngFor="let r of recordsOfSelectedPet()"
+        >
+          <p><strong>{{ r.title }}</strong></p>
+          <p><strong>Fecha:</strong> {{ r.date | date: 'dd/MM/yyyy HH:mm' }}</p>
+          <p><strong>Atendió:</strong> {{ r.Vet?.username || 'Staff' }}</p>
+          <p><strong>Detalle:</strong> {{ r.description }}</p>
+          <p *ngIf="r.weightKg !== null && r.weightKg !== undefined">
+            <strong>Peso registrado:</strong> {{ r.weightKg }} kg
+          </p>
+          <p *ngIf="r.notesForOwner">
+            <strong>Nota para dueño:</strong> {{ r.notesForOwner }}
+          </p>
+          <p *ngIf="r.internalNotes">
+            <strong>Nota interna:</strong> {{ r.internalNotes }}
+          </p>
+          <p>
+            <strong>Visible para dueño:</strong> {{ r.visibleToOwner ? 'Sí' :
+            'No' }}
+          </p>
+        </article>
+
+        <p *ngIf="recordsOfSelectedPet().length === 0">Sin informes aún.</p>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary" (click)="closeMedicalHistory()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" *ngIf="toast().open">
+    <div
+      class="toast"
+      [class.success]="toast().type === 'success'"
+      [class.error]="toast().type === 'error'"
+    >
+      {{ toast().message }}
+    </div>
+  </div>
+</div>

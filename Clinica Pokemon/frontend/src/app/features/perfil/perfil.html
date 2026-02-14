@@ -19,41 +19,84 @@
       <p><strong>Email:</strong> {{ user()!.email }}</p>
 
       <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
-      <button class="pdf-btn" (click)="downloadPDF()">Descargar Perfil PDF</button>
 
-      <div class="pokemon-section">
-        <h3>Mis mascotas</h3>
+      <ng-container *ngIf="user()?.role === 'OWNER'">
+        <button class="pdf-btn" (click)="downloadPDF()">Descargar Perfil PDF</button>
 
-        <input
-          type="text"
-          [ngModel]="searchTerm()"
-          (ngModelChange)="searchTerm.set($event)"
-          placeholder="Buscar por nombre, especie o tipo..."
-          class="search-input"
-        />
+        <div class="pokemon-section">
+          <h3>Mis mascotas</h3>
 
-        <p *ngIf="petsLoading()" class="loading-small">Cargando mascotas...</p>
+          <input
+            type="text"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
+            placeholder="Buscar por nombre, especie o tipo..."
+            class="search-input"
+          />
 
-        <div class="pokemon-list" *ngIf="!petsLoading()">
-          <div class="pokemon-card" *ngFor="let pet of filteredPets()">
-            <img
-              [src]="pet.photoUrl || pet.Species?.imageUrl || '/assets/img/pokeball_icon.webp'"
-              [alt]="pet.name"
-            />
+          <p *ngIf="petsLoading()" class="loading-small">Cargando mascotas...</p>
 
-            <h4>{{ pet.name }}</h4>
-            <p><strong>Especie:</strong> {{ pet.Species?.name || '—' }}</p>
-            <p class="types"><strong>Tipos:</strong> {{ (pet.Species?.types || []).join(', ') || '—' }}</p>
-            <p><strong>Sexo:</strong> {{ pet.sex }}</p>
-            <p><strong>Peso:</strong> {{ pet.weightKg ?? '—' }} kg</p>
+          <div class="pokemon-list" *ngIf="!petsLoading()">
+            <div class="pokemon-card" *ngFor="let pet of filteredPets()">
+              <img
+                [src]="pet.photoUrl || pet.Species?.imageUrl || '/assets/img/pokeball_icon.webp'"
+                [alt]="pet.name"
+              />
+
+              <h4>{{ pet.name }}</h4>
+              <p><strong>Especie:</strong> {{ pet.Species?.name || '—' }}</p>
+              <p class="types">
+                <strong>Tipos:</strong> {{ (pet.Species?.types || []).join(', ') || '—' }}
+              </p>
+              <p><strong>Sexo:</strong> {{ formatSex(pet.sex) }}</p>
+              <p><strong>Peso:</strong> {{ pet.weightKg ?? '—' }} kg</p>
+
+              <button class="history-btn" (click)="openHistory(pet)">
+                Ver historial médico
+              </button>
+            </div>
           </div>
-        </div>
 
-        <p *ngIf="!petsLoading() && filteredPets().length === 0" class="empty-msg">
-          No se encontraron mascotas.
-        </p>
-      </div>
+          <p *ngIf="!petsLoading() && filteredPets().length === 0" class="empty-msg">
+            No se encontraron mascotas.
+          </p>
+        </div>
+      </ng-container>
     </ng-template>
+  </div>
+</div>
+
+<!-- Modal historial médico OWNER -->
+<div class="modal-backdrop" *ngIf="historyModalOpen() && selectedPetForHistory() as pet">
+  <div class="modal-card modal-lg">
+    <h4>Historial médico · {{ pet.name }}</h4>
+
+    <p *ngIf="recordsLoading()" class="loading-small">Cargando historial...</p>
+
+    <div *ngIf="!recordsLoading()">
+      <article class="record-card" *ngFor="let r of recordsOfSelectedPet()">
+        <p><strong>{{ r.title }}</strong></p>
+        <p><strong>Fecha:</strong> {{ r.date | date: 'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Atendió:</strong> {{ r.Vet?.username || 'Staff' }}</p>
+        <p><strong>Detalle:</strong> {{ r.description }}</p>
+
+        <p *ngIf="r.weightKg !== null && r.weightKg !== undefined">
+          <strong>Peso registrado:</strong> {{ r.weightKg }} kg
+        </p>
+
+        <p *ngIf="r.notesForOwner">
+          <strong>Indicaciones para vos:</strong> {{ r.notesForOwner }}
+        </p>
+      </article>
+
+      <p *ngIf="recordsOfSelectedPet().length === 0" class="empty-msg">
+        Esta mascota todavía no tiene informes visibles.
+      </p>
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary-btn" (click)="closeHistory()">Cerrar</button>
+    </div>
   </div>
 </div>
 

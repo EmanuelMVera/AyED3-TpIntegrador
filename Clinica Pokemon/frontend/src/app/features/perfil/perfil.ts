@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 
 import { AuthService, CurrentUser } from '../../core/services/auth.service';
 import { Pet } from '../../core/models/pet.model';
+import { MedicalRecord } from '../../core/models/medical-record.model';
 
 @Component({
   selector: 'app-perfil',
@@ -26,7 +27,15 @@ export class Perfil implements OnInit {
   petsLoading = signal(false);
   searchTerm = signal('');
 
-  isStaff = computed(() => this.user()?.role === 'STAFF' || this.user()?.role === 'ADMIN');
+  // Historial médico
+  historyModalOpen = signal(false);
+  selectedPetForHistory = signal<Pet | null>(null);
+  recordsLoading = signal(false);
+  recordsOfSelectedPet = signal<MedicalRecord[]>([]);
+
+  isStaff = computed(
+    () => this.user()?.role === 'STAFF' || this.user()?.role === 'ADMIN',
+  );
   isOwner = computed(() => this.user()?.role === 'OWNER');
 
   filteredPets = computed(() => {
@@ -39,7 +48,11 @@ export class Perfil implements OnInit {
       const speciesName = pet.Species?.name?.toLowerCase() ?? '';
       const petName = pet.name?.toLowerCase() ?? '';
       const types = (pet.Species?.types ?? []).join(' ').toLowerCase();
-      return petName.includes(term) || speciesName.includes(term) || types.includes(term);
+      return (
+        petName.includes(term) ||
+        speciesName.includes(term) ||
+        types.includes(term)
+      );
     });
   });
 
@@ -77,21 +90,57 @@ export class Perfil implements OnInit {
     });
   }
 
+  openHistory(pet: Pet): void {
+    this.selectedPetForHistory.set(pet);
+    this.historyModalOpen.set(true);
+    this.loadRecordsByPet(pet.id);
+  }
+
+  closeHistory(): void {
+    this.historyModalOpen.set(false);
+    this.selectedPetForHistory.set(null);
+    this.recordsOfSelectedPet.set([]);
+  }
+
+  loadRecordsByPet(petId: number): void {
+    this.recordsLoading.set(true);
+    this.http
+      .get<MedicalRecord[]>(`http://localhost:4000/api/records/pet/${petId}`)
+      .subscribe({
+        next: (records) => {
+          this.recordsOfSelectedPet.set(records ?? []);
+          this.recordsLoading.set(false);
+        },
+        error: () => {
+          this.recordsOfSelectedPet.set([]);
+          this.recordsLoading.set(false);
+        },
+      });
+  }
+
   downloadPDF(): void {
     // OWNER únicamente
     if (!this.isOwner()) return;
 
-    this.http.get('http://localhost:4000/api/users/me/pdf', { responseType: 'blob' }).subscribe({
-      next: (blob) => {
-        const username = this.user()?.username ?? 'usuario';
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `perfil_${username}.pdf`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-    });
+    this.http
+      .get('http://localhost:4000/api/users/me/pdf', { responseType: 'blob' })
+      .subscribe({
+        next: (blob) => {
+          const username = this.user()?.username ?? 'usuario';
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `perfil_${username}.pdf`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+      });
+  }
+
+  formatSex(sex: 'M' | 'F' | 'UNKNOWN' | string | null | undefined): string {
+    if (sex === 'M') return 'Macho';
+    if (sex === 'F') return 'Hembra';
+    return 'Desconocido';
   }
 
   logout(): void {

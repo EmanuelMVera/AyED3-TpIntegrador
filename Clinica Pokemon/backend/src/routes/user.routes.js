@@ -14,8 +14,17 @@ const router = express.Router();
 /**
  * Middleware simple para restringir a staff
  */
+// function requireStaff(req, res, next) {
+  // if (req.userRole !== 'STAFF') {
+    // return res
+      // .status(403)
+      // .json({ error: 'Acceso restringido: sólo personal de la clínica.' });
+  // }
+  // next();
+// }
 function requireStaff(req, res, next) {
-  if (req.userRole !== 'STAFF') {
+  const isStaff = req.userRole === 'STAFF' || req.userRole === 'ADMIN';
+  if (!isStaff) {
     return res
       .status(403)
       .json({ error: 'Acceso restringido: sólo personal de la clínica.' });
@@ -23,13 +32,15 @@ function requireStaff(req, res, next) {
   next();
 }
 
+
 /**
  * Middleware para permitir:
  *  - staff: puede editar cualquier usuario
  *  - owner: sólo puede editar su propio usuario (req.params.id)
  */
 function canEditUser(req, res, next) {
-  const isStaff = req.userRole === 'STAFF';
+  // const isStaff = req.userRole === 'STAFF';
+  const isStaff = req.userRole === 'STAFF' || req.userRole === 'ADMIN';
   const isSelf = Number(req.params.id) === Number(req.userId);
 
   if (!isStaff && !isSelf) {
