@@ -17,9 +17,14 @@ export class Login {
   email: string = '';
   password: string = '';
   error: string = '';
+showPassword: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+  
   login(): void {
     this.authService.login(this.email, this.password).subscribe({
       next: () => {

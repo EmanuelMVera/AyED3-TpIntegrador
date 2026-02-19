@@ -22,9 +22,9 @@
         <ng-template #loggedIn>
           <li class="username">
             Hola, {{ authService.currentUser()?.username }}
-            <span class="role-tag" *ngIf="authService.currentUser()?.role">
+            <!-- <span class="role-tag" *ngIf="authService.currentUser()?.role">
               ({{ authService.currentUser()?.role | lowercase }})
-            </span>
+            </span> -->
           </li>
 
           <li><a routerLink="/perfil" (click)="closeMenu()">Mi perfil</a></li>

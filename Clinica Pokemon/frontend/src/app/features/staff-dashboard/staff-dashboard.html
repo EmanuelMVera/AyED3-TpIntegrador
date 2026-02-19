@@ -1,15 +1,15 @@
 <div class="staff-dashboard">
   <h2>Panel de clínica</h2>
 
-  <p class="error" *ngIf="error()">{{ error() }}</p>
-  <p class="success" *ngIf="success()">{{ success() }}</p>
+  <!-- <p class="error" *ngIf="error()">{{ error() }}</p>
+  <p class="success" *ngIf="success()">{{ success() }}</p> -->
 
   <div *ngIf="loading()" class="loading">Cargando panel...</div>
 
   <div class="layout" *ngIf="!loading()">
     <!-- Columna Owners -->
     <section class="owners-panel">
-      <h3>Clientes (owners)</h3>
+      <h3>Clientes</h3>
 
       <input
         type="text"
@@ -36,7 +36,7 @@
       class="detail-panel"
       *ngIf="selectedOwner() as owner; else noOwner"
     >
-      <h3>Ficha de {{ owner.username }}</h3>
+      <h3>Ficha de {{ owner.firstName }} {{ owner.lastName }}</h3>
       <p>
         <strong>Email:</strong> {{ owner.email }} · <strong>Tel:</strong>
         {{ owner.phone || '—' }}
@@ -111,28 +111,63 @@
 
       <h4 class="pets-title">Mascotas registradas</h4>
       <div class="pets-grid">
-        <article class="pet-card" *ngFor="let pet of petsOfSelectedOwner()">
-          <h5>{{ pet.name }}</h5>
-          <p><strong>Especie:</strong> {{ getSpeciesName(pet.speciesId) }}</p>
-          <p><strong>Sexo:</strong> {{ formatSex(pet.sex) }}</p>
-          <p><strong>Peso:</strong> {{ pet.weightKg ?? '—' }} kg</p>
-          <p *ngIf="pet.notes"><strong>Notas:</strong> {{ pet.notes }}</p>
+        <div class="flip-card" *ngFor="let pet of petsOfSelectedOwner()">
+          <button
+            class="delete-btn-x"
+            (click)="deletePet(pet)"
+            title="Eliminar"
+          >
+            ×
+          </button>
 
-          <div class="card-actions">
-            <button (click)="startEditPet(pet)">Editar</button>
-            <button class="danger" (click)="deletePet(pet)">Eliminar</button>
-          </div>
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="pet-image-container">
+                <img
+                  [src]="'https://img.pokemondb.net/sprites/home/normal/' + getSpeciesName(pet.speciesId).toLowerCase() + '.png'"
+                  alt="pokemon"
+                  onerror="this.src = 'assets/default-pet.png'"
+                />
+              </div>
+              <h5>{{ pet.name }}</h5>
+              <span class="species-tag"
+                >{{ getSpeciesName(pet.speciesId) }}</span
+              >
+              <small class="tap-hint">Click para ver más</small>
+            </div>
 
-          <div class="card-actions" style="margin-top: 0.4rem">
-            <button (click)="openMedicalHistory(pet)">Historial médico</button>
+            <div class="flip-card-back">
+              <div class="details">
+                <p><strong>Sexo:</strong> {{ formatSex(pet.sex) }}</p>
+                <p><strong>Peso:</strong> {{ pet.weightKg ?? '—' }} kg</p>
+                <p class="notes-text" *ngIf="pet.notes">
+                  <strong>Nota:</strong> {{ pet.notes }}
+                </p>
+              </div>
+
+              <div class="back-actions">
+                <button
+                  class="btn-edit"
+                  (click)="startEditPet(pet); $event.stopPropagation()"
+                >
+                  Editar
+                </button>
+                <button
+                  class="btn-history"
+                  (click)="openMedicalHistory(pet); $event.stopPropagation()"
+                >
+                  Historial
+                </button>
+              </div>
+            </div>
           </div>
-        </article>
+        </div>
       </div>
     </section>
 
     <ng-template #noOwner>
       <section class="detail-panel">
-        <p>No hay owners para mostrar.</p>
+        <p>No hay clientes para mostrar.</p>
       </section>
     </ng-template>
   </div>

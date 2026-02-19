@@ -3,63 +3,45 @@
 
   <form (ngSubmit)="registerOwner()" #registerForm="ngForm">
     
-    <input
-      type="text"
-      [(ngModel)]="formData.username"
-      name="username"
-      placeholder="Usuario / alias"
-      required
-    />
-
-    <div class="row">
-      <input
-        type="text"
-        [(ngModel)]="formData.firstName"
-        name="firstName"
-        placeholder="Nombre"
-        required
-      />
-
-      <input
-        type="text"
-        [(ngModel)]="formData.lastName"
-        name="lastName"
-        placeholder="Apellido"
-        required
-      />
+    <div class="input-group">
+      <input type="text" [(ngModel)]="formData.username" name="username" placeholder="Usuario / alias" required />
     </div>
 
-    <input
-      type="tel"
-      [(ngModel)]="formData.phone"
-      name="phone"
-      placeholder="Teléfono"
-    />
+    <div class="row">
+      <input type="text" [(ngModel)]="formData.firstName" name="firstName" placeholder="Nombre" required />
+      <input type="text" [(ngModel)]="formData.lastName" name="lastName" placeholder="Apellido" required />
+    </div>
 
-    <input
-      type="text"
-      [(ngModel)]="formData.address"
-      name="address"
-      placeholder="Dirección"
-    />
+    <div class="row">
+      <input type="tel" [(ngModel)]="formData.phone" name="phone" placeholder="Teléfono" />
+      <input type="text" [(ngModel)]="formData.address" name="address" placeholder="Dirección" />
+    </div>
 
-    <input
-      type="email"
-      [(ngModel)]="formData.email"
-      name="email"
-      placeholder="Correo electrónico"
-      required
-    />
+    <hr class="separator">
 
-    <input
-      type="password"
-      [(ngModel)]="formData.password"
-      name="password"
-      placeholder="Contraseña inicial"
-      required
-    />
+    <div class="row">
+      <input type="email" [(ngModel)]="formData.email" name="email" placeholder="Correo electrónico" required />
+      
+      <div class="input-wrapper">
+        <input type="email" [(ngModel)]="confirmEmail" name="confirmEmail" placeholder="Confirmar correo" required />
+        <span class="status-icon" *ngIf="confirmEmail">
+          {{ formData.email === confirmEmail ? '✅' : '❌' }}
+        </span>
+      </div>
+    </div>
 
-    <button type="submit" [disabled]="registerForm.invalid">
+    <div class="row">
+      <input type="password" [(ngModel)]="formData.password" name="password" placeholder="Contraseña inicial" required />
+      
+      <div class="input-wrapper">
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirmar contraseña" required />
+        <span class="status-icon" *ngIf="confirmPassword">
+          {{ formData.password === confirmPassword ? '✅' : '❌' }}
+        </span>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid || !fieldsMatch()">
       Crear cliente
     </button>
 

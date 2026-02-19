@@ -15,9 +15,12 @@ export class Register {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Agrupamos el formulario en un objeto
   formData = this.getInitialFormData();
-  
+
+  // Variables para confirmación
+  confirmEmail: string = '';
+  confirmPassword: string = '';
+
   error = '';
   success = '';
 
@@ -34,37 +37,55 @@ export class Register {
   }
 
   // registerOwner(): void {
-    // this.error = '';
-    // this.success = '';
+  // this.error = '';
+  // this.success = '';
 
-    // this.authService.registerOwner(this.formData).subscribe({
-      // next: () => {
-        // this.success = 'Cliente creado correctamente.';
-        // this.formData = this.getInitialFormData(); // Reset total en una línea
-        
-        // // Descomentar si deseas redirigir:
-        // // this.router.navigate(['/panel']);
-      // },
-      // error: (err) => {
-        // console.error('Error al registrar dueño:', err);
-        // this.error = err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
-      // },
-    // });
+  // this.authService.registerOwner(this.formData).subscribe({
+  // next: () => {
+  // this.success = 'Cliente creado correctamente.';
+  // this.formData = this.getInitialFormData(); // Reset total en una línea
+
+  // // Descomentar si deseas redirigir:
+  // // this.router.navigate(['/panel']);
+  // },
+  // error: (err) => {
+  // console.error('Error al registrar dueño:', err);
+  // this.error = err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
+  // },
+  // });
   // }
+
+  // Validación lógica: ¿coinciden los campos?
+  fieldsMatch(): boolean {
+    return (
+      this.formData.email === this.confirmEmail &&
+      this.formData.password === this.confirmPassword &&
+      this.formData.email !== '' &&
+      this.formData.password !== ''
+    );
+  }
+
   registerOwner(): void {
-  this.error = '';
-  this.success = '';
+    if (!this.fieldsMatch()) {
+      this.error = 'El correo o la contraseña no coinciden.';
+      return;
+    }
 
-  this.authService.registerOwnerAsStaff(this.formData).subscribe({
-    next: () => {
-      this.success = 'Cliente creado correctamente.';
-      this.formData = this.getInitialFormData();
-    },
-    error: (err) => {
-      console.error('Error al registrar dueño:', err);
-      this.error = err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
-    },
-  });
-}
+    this.error = '';
+    this.success = '';
 
+    this.authService.registerOwnerAsStaff(this.formData).subscribe({
+      next: () => {
+        this.success = 'Cliente creado correctamente.';
+        this.formData = this.getInitialFormData();
+        this.confirmEmail = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        console.error('Error al registrar dueño:', err);
+        this.error =
+          err?.error?.error || 'Error al crear el cliente. Revisa los datos.';
+      },
+    });
+  }
 }

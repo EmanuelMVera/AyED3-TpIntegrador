@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 export async function getAllUsers(req, res) {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'username', 'email', 'role', 'phone', 'createdAt'],
+      attributes: { exclude: ['password'] },
       order: [['createdAt', 'DESC']],
     });
 
@@ -28,7 +28,7 @@ export async function getAllUsers(req, res) {
 export async function getUserById(req, res) {
   try {
     const user = await User.findByPk(req.params.id, {
-      attributes: ['id', 'username', 'email', 'role', 'phone', 'createdAt'],
+      attributes: { exclude: ['password'] },
     });
 
     if (!user) {
@@ -101,7 +101,7 @@ export async function getProfile(req, res) {
     const userId = req.userId;
 
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'username', 'email', 'role', 'phone', 'createdAt'],
+      attributes: { exclude: ['password'] },
       include: [
         {
           model: Pet,
@@ -232,544 +232,136 @@ export async function generateUserPDF(req, res) {
     const userId = req.userId;
 
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'username', 'email', 'role', 'phone', 'createdAt'],
+      attributes: { exclude: ['password'] },
       include: [
         {
           model: Pet,
           as: 'Pets',
           include: [
-            {
-              model: Pokemon,
-              as: 'Species',
-              attributes: ['id', 'name', 'types', 'description'],
-            },
+            { model: Pokemon, as: 'Species' },
             {
               model: MedicalRecord,
               as: 'Records',
               where: { visibleToOwner: true },
               required: false,
-              attributes: [
-                'id',
-                'date',
-                'title',
-                'description',
-                'weightKg',
-                'notesForOwner',
-                'visibleToOwner',
-                'createdAt',
-              ],
             },
           ],
         },
       ],
       order: [
         [{ model: Pet, as: 'Pets' }, 'name', 'ASC'],
-        [
-          { model: Pet, as: 'Pets' },
-          { model: MedicalRecord, as: 'Records' },
-          'date',
-          'DESC',
-        ],
+        [{ model: Pet, as: 'Pets' }, { model: MedicalRecord, as: 'Records' }, 'date', 'DESC'],
       ],
     });
 
-    if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
     const pets = Array.isArray(user.Pets) ? user.Pets : [];
+    const doc = new PDFDocument({ size: 'A4', margin: 50, bufferPages: true });
 
-    const doc = new PDFDocument({
-      size: 'A4',
-      margin: 50,
-      bufferPages: true,
-      info: {
-        Title: `Informe Clínico - ${user.username}`,
-        Author: 'Clínica Pokémon',
-        Subject: 'Resumen de cliente, mascotas e historial médico',
-      },
-    });
-
-    const safeUsername = String(user.username || 'cliente').replace(
-      /[^\w.-]/g,
-      '_',
-    );
-    const filename = `informe_clinico_${safeUsername}.pdf`;
-
+    // Nombre de archivo profesional
+    const filename = `informe_clinico_${user.lastName}_${user.firstName}.pdf`.replace(/\s+/g, '_');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', 'application/pdf');
-
     doc.pipe(res);
 
     const pageW = doc.page.width;
     const contentW = pageW - 100;
 
-    // ----------------------------------------------------------------------
-    // PORTADA
-    // ----------------------------------------------------------------------
-    // Fondo superior
-    doc.save();
-    doc.rect(0, 0, pageW, 190).fill('#0F172A');
-    doc.restore();
+    // --- PORTADA ---
+    doc.save().rect(0, 0, pageW, 190).fill('#0F172A').restore();
+    doc.save().rect(0, 150, pageW, 40).fill('#1D4ED8').restore();
 
-    // Banda decorativa
-    doc.save();
-    doc.rect(0, 150, pageW, 40).fill('#1D4ED8');
-    doc.restore();
+    doc.font('Helvetica-Bold').fontSize(26).fillColor('#FFFFFF').text('INFORME CLÍNICO', 50, 52);
+    doc.font('Helvetica').fontSize(13).fillColor('#BFDBFE').text('Clínica Pokémon', 50, 88);
 
-    // Título principal
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(26)
-      .fillColor('#FFFFFF')
-      .text('INFORME CLÍNICO', 50, 52);
-
-    doc
-      .font('Helvetica')
-      .fontSize(13)
-      .fillColor('#BFDBFE')
-      .text('Clínica Pokémon', 50, 88);
-
-    // Tarjeta portada
     const coverCardY = 220;
-    drawRoundedBox(doc, {
-      x: 50,
-      y: coverCardY,
-      w: contentW,
-      h: 185,
-      fill: '#F8FAFC',
-      stroke: '#E2E8F0',
-      r: 14,
-    });
+    drawRoundedBox(doc, { x: 50, y: coverCardY, w: contentW, h: 160, fill: '#F8FAFC', stroke: '#E2E8F0', r: 14 });
 
     doc.y = coverCardY + 18;
     doc.x = 66;
-
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .fillColor('#0F172A')
-      .text('Datos del cliente');
-
+    doc.font('Helvetica-Bold').fontSize(14).fillColor('#0F172A').text('Datos del cliente');
     doc.moveDown(0.5);
     doc.fontSize(11).font('Helvetica').fillColor('#111827');
-    doc.text(`Usuario: ${user.username || '—'}`);
+    
+    // CAMBIO: Nombre y Apellido en lugar de Username, y quitamos Rol
+    doc.text(`Cliente: ${user.firstName} ${user.lastName}`);
     doc.text(`Email: ${user.email || '—'}`);
-    doc.text(`Rol: ${user.role || '—'}`);
     doc.text(`Teléfono: ${user.phone || 'No registrado'}`);
     doc.text(`Miembro desde: ${formatDate(user.createdAt)}`);
-    doc.text(`Emitido: ${formatDateTime(new Date())}`);
+    doc.text(`Fecha de emisión: ${formatDateTime(new Date())}`);
 
-    // Métricas rápidas
-    const totalRecords = pets.reduce(
-      (acc, p) => acc + (Array.isArray(p.Records) ? p.Records.length : 0),
-      0,
-    );
-
-    const metricY = coverCardY + 122;
-    const boxW = (contentW - 20) / 3;
-
-    const drawMetric = (x, title, value, color = '#1D4ED8') => {
-      drawRoundedBox(doc, {
-        x,
-        y: metricY,
-        w: boxW,
-        h: 52,
-        fill: '#FFFFFF',
-        stroke: '#E5E7EB',
-        r: 10,
-      });
-      doc
-        .font('Helvetica')
-        .fontSize(8.5)
-        .fillColor('#6B7280')
-        .text(title, x + 10, metricY + 9);
-      doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .fillColor(color)
-        .text(String(value), x + 10, metricY + 23);
-    };
-
-    drawMetric(60, 'Mascotas registradas', pets.length, '#2563EB');
-    drawMetric(60 + boxW + 10, 'Informes visibles', totalRecords, '#0EA5E9');
-    drawMetric(
-      60 + (boxW + 10) * 2,
-      'Estado',
-      pets.length ? 'Activo' : 'Inicial',
-      '#16A34A',
-    );
-
-    // Pie portada
-    doc
-      .font('Helvetica')
-      .fontSize(9.5)
-      .fillColor('#6B7280')
-      .text(
-        'Documento confidencial de uso clínico.',
-        50,
-        doc.page.height - 80,
-        {
-          width: contentW,
-          align: 'center',
-        },
-      );
-
-    // ----------------------------------------------------------------------
-    // PÁGINA 2: ÍNDICE
-    // ----------------------------------------------------------------------
+    // --- PÁGINA 2: ÍNDICE ---
     doc.addPage();
-
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(18)
-      .fillColor('#0F172A')
-      .text('Índice de contenido');
-
-    doc.moveDown(0.4);
-    doc
-      .font('Helvetica')
-      .fontSize(10)
-      .fillColor('#4B5563')
-      .text('Resumen de mascotas y accesos rápidos del informe.');
-
+    doc.font('Helvetica-Bold').fontSize(18).fillColor('#0F172A').text('Índice de contenido');
     doc.moveDown(1);
 
-    drawRoundedBox(doc, {
-      x: 50,
-      y: doc.y,
-      w: contentW,
-      h: Math.max(88, 32 + pets.length * 24),
-      fill: '#FFFFFF',
-      stroke: '#E5E7EB',
-      r: 12,
+    const indexRowHeight = 22;
+    const indexBoxHeight = 50 + (pets.length * indexRowHeight);
+    const startIdxY = doc.y;
+
+    drawRoundedBox(doc, { x: 50, y: startIdxY, w: contentW, h: Math.max(60, indexBoxHeight), r: 12 });
+    
+    let iy = startIdxY + 15;
+    doc.font('Helvetica-Bold').fontSize(11).text('Mascotas registradas', 64, iy);
+    iy += 25;
+
+    pets.forEach((pet, index) => {
+      doc.font('Helvetica').fontSize(10).fillColor('#111827').text(`${index + 1}. ${pet.name}`, 84, iy);
+      const count = pet.Records?.length || 0;
+      doc.fillColor('#6B7280').text(`(${count} informes)`, 280, iy);
+      iy += indexRowHeight;
     });
 
-    let iy = doc.y + 14;
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(11)
-      .fillColor('#111827')
-      .text('Secciones', 64, iy);
-    iy += 24;
-
-    doc.font('Helvetica').fontSize(10).fillColor('#374151');
-    doc.text('1. Datos del cliente', 64, iy);
-    iy += 20;
-    doc.text('2. Mascotas registradas', 64, iy);
-    iy += 24;
-
-    if (!pets.length) {
-      doc
-        .fillColor('#6B7280')
-        .text('— Sin mascotas cargadas actualmente', 84, iy);
-      iy += 20;
-    } else {
-      pets.forEach((pet, index) => {
-        const recCount = Array.isArray(pet.Records) ? pet.Records.length : 0;
-        doc
-          .fillColor('#111827')
-          .text(`2.${index + 1} ${pet.name || 'Mascota sin nombre'}`, 84, iy);
-        doc
-          .fillColor('#6B7280')
-          .text(`(${recCount} informes visibles)`, 280, iy);
-        iy += 20;
-      });
-    }
-
-    doc.y = Math.max(doc.y + 120, iy + 18);
-
-    // ----------------------------------------------------------------------
-    // PÁGINAS: BLOQUES DE MASCOTAS + HISTORIAL
-    // ----------------------------------------------------------------------
+    // --- PÁGINAS DE CONTENIDO ---
     doc.addPage();
+    doc.font('Helvetica-Bold').fontSize(18).fillColor('#0F172A').text('Detalle de Mascotas');
+    doc.moveDown(1);
 
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(18)
-      .fillColor('#0F172A')
-      .text('Mascotas e historial médico');
+    for (const pet of pets) {
+      // Solo saltamos si estamos muy al final de la página (menos de 150pt)
+      ensureSpace(doc, 150);
+      
+      const cardY = doc.y;
+      drawRoundedBox(doc, { x: 50, y: cardY, w: contentW, h: 130, stroke: '#CBD5E1', r: 12 });
 
-    doc.moveDown(0.35);
-    doc
-      .font('Helvetica')
-      .fontSize(10)
-      .fillColor('#4B5563')
-      .text(
-        'Se muestran únicamente informes marcados como visibles para el dueño.',
-      );
+      doc.font('Helvetica-Bold').fontSize(14).fillColor('#0F172A').text(pet.name, 64, cardY + 15);
 
-    doc.moveDown(0.8);
+      let tx = 64;
+      const t1 = drawTag(doc, `Especie: ${pet.Species?.name}`, tx, cardY + 40, { bg: '#DBEAFE', fg: '#1E40AF' });
+      drawTag(doc, `Sexo: ${petSexLabel(pet.sex)}`, tx + t1.w + 8, cardY + 40, { bg: '#E0E7FF', fg: '#3730A3' });
 
-    if (!pets.length) {
-      drawRoundedBox(doc, {
-        x: 50,
-        y: doc.y,
-        w: contentW,
-        h: 70,
-        fill: '#F9FAFB',
-        stroke: '#E5E7EB',
-        r: 12,
-      });
+      // Notas iniciales del Pokémon
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#374151').text('Nota de registro:', 64, cardY + 70);
+      doc.font('Helvetica').fontSize(9).fillColor('#4B5563').text(pet.notes || 'Sin notas iniciales.', 64, cardY + 82, { width: contentW - 40 });
 
-      doc
-        .font('Helvetica')
-        .fontSize(11)
-        .fillColor('#374151')
-        .text('No hay mascotas registradas para este cliente.', 68, doc.y + 26);
-    } else {
-      for (let i = 0; i < pets.length; i++) {
-        const pet = pets[i];
-        const speciesName = pet?.Species?.name || 'Sin especie';
-        const types = Array.isArray(pet?.Species?.types)
-          ? pet.Species.types
-          : [];
-        const speciesDesc = pet?.Species?.description || '';
-        const records = (Array.isArray(pet?.Records) ? pet.Records : [])
-          .slice()
-          .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-          )
-          .slice(0, 5);
+      doc.y = cardY + 145;
 
-        // Altura estimada del bloque mascota
-        const petHeaderH = 150;
-        const recordsH = Math.max(46, records.length * 96);
-        const totalBlockH = petHeaderH + recordsH + 22;
+      // Registros Médicos
+      const records = (pet.Records || []).slice(0, 5);
+      if (records.length > 0) {
+        doc.font('Helvetica-Bold').fontSize(11).text('Últimos informes:', 55);
+        doc.moveDown(0.5);
 
-        ensureSpace(doc, totalBlockH);
+        for (const r of records) {
+          ensureSpace(doc, 80);
+          const ry = doc.y;
+          drawRoundedBox(doc, { x: 55, y: ry, w: contentW - 10, h: 70, fill: '#F9FAFB', r: 8 });
 
-        // Card mascota
-        const cardX = 50;
-        const cardY = doc.y;
-        const cardW = contentW;
-        const cardH = petHeaderH;
-
-        drawRoundedBox(doc, {
-          x: cardX,
-          y: cardY,
-          w: cardW,
-          h: cardH,
-          fill: '#FFFFFF',
-          stroke: '#CBD5E1',
-          r: 12,
-        });
-
-        // Título mascota
-        doc
-          .font('Helvetica-Bold')
-          .fontSize(14)
-          .fillColor('#0F172A')
-          .text(
-            `${i + 1}. ${pet?.name || 'Mascota sin nombre'}`,
-            cardX + 14,
-            cardY + 12,
-          );
-
-        // Chips/tags
-        let tx = cardX + 14;
-        const ty = cardY + 38;
-        const t1 = drawTag(doc, `Especie: ${speciesName}`, tx, ty, {
-          bg: '#DBEAFE',
-          fg: '#1E40AF',
-        });
-        tx += t1.w + 8;
-        const t2 = drawTag(doc, `Sexo: ${petSexLabel(pet?.sex)}`, tx, ty, {
-          bg: '#E0E7FF',
-          fg: '#3730A3',
-        });
-        tx += t2.w + 8;
-        drawTag(doc, `Peso: ${pet?.weightKg ?? '—'} kg`, tx, ty, {
-          bg: '#DCFCE7',
-          fg: '#166534',
-        });
-
-        // Datos
-        doc
-          .font('Helvetica')
-          .fontSize(10)
-          .fillColor('#374151')
-          .text(
-            `Nacimiento: ${formatDate(pet?.birthDate)}`,
-            cardX + 14,
-            cardY + 66,
-          );
-
-        if (types.length) {
-          doc.text(`Tipos: ${types.join(', ')}`, cardX + 14, cardY + 82);
-        }
-
-        if (speciesDesc) {
-          doc
-            .font('Helvetica')
-            .fontSize(9.6)
-            .fillColor('#4B5563')
-            .text(
-              `Descripción especie: ${speciesDesc}`,
-              cardX + 14,
-              cardY + 100,
-              {
-                width: cardW - 28,
-                height: 30,
-                ellipsis: true,
-              },
-            );
-        }
-
-        // Encabezado historial
-        let currentY = cardY + cardH + 10;
-        doc
-          .font('Helvetica-Bold')
-          .fontSize(11)
-          .fillColor('#111827')
-          .text('Historial médico visible (últimos 5)', cardX + 4, currentY);
-
-        currentY += 18;
-
-        if (!records.length) {
-          drawRoundedBox(doc, {
-            x: cardX + 4,
-            y: currentY,
-            w: cardW - 8,
-            h: 42,
-            fill: '#F8FAFC',
-            stroke: '#E2E8F0',
-            r: 10,
-          });
-
-          doc
-            .font('Helvetica')
-            .fontSize(9.8)
-            .fillColor('#6B7280')
-            .text(
-              'Sin informes clínicos visibles para el dueño.',
-              cardX + 16,
-              currentY + 14,
-            );
-
-          currentY += 52;
-        } else {
-          records.forEach((r, idx) => {
-            const rx = cardX + 4;
-            const ry = currentY;
-            const rw = cardW - 8;
-            const rh = 88;
-
-            ensureSpace(doc, rh + 18);
-
-            drawRoundedBox(doc, {
-              x: rx,
-              y: ry,
-              w: rw,
-              h: rh,
-              fill: '#F9FAFB',
-              stroke: '#E5E7EB',
-              r: 10,
-            });
-
-            doc
-              .font('Helvetica-Bold')
-              .fontSize(10.5)
-              .fillColor('#111827')
-              .text(
-                `${idx + 1}) ${r?.title || 'Sin título'}`,
-                rx + 10,
-                ry + 10,
-                {
-                  width: rw - 20,
-                  height: 16,
-                  ellipsis: true,
-                },
-              );
-
-            doc
-              .font('Helvetica')
-              .fontSize(9.2)
-              .fillColor('#6B7280')
-              .text(
-                `Fecha: ${formatDate(r?.date)}${r?.weightKg ? ` · Peso: ${r.weightKg} kg` : ''}`,
-                rx + 10,
-                ry + 26,
-              );
-
-            doc
-              .font('Helvetica')
-              .fontSize(9.2)
-              .fillColor('#374151')
-              .text(r?.description || 'Sin descripción', rx + 10, ry + 40, {
-                width: rw - 20,
-                height: 24,
-                ellipsis: true,
-              });
-
-            if (r?.notesForOwner) {
-              doc
-                .font('Helvetica-Oblique')
-                .fontSize(9)
-                .fillColor('#4B5563')
-                .text(`Para el dueño: ${r.notesForOwner}`, rx + 10, ry + 64, {
-                  width: rw - 20,
-                  height: 16,
-                  ellipsis: true,
-                });
-            }
-
-            currentY += rh + 8;
-          });
-        }
-
-        doc.y = currentY + 6;
-
-        // Separador entre mascotas
-        if (i < pets.length - 1) {
-          doc
-            .strokeColor('#E5E7EB')
-            .lineWidth(1)
-            .moveTo(50, doc.y)
-            .lineTo(pageW - 50, doc.y)
-            .stroke();
-
-          doc.moveDown(1);
+          doc.font('Helvetica-Bold').fontSize(10).fillColor('#111827').text(r.title, 65, ry + 10);
+          doc.font('Helvetica').fontSize(9).fillColor('#6B7280').text(`${formatDate(r.date)} - Peso: ${r.weightKg}kg`, 65, ry + 25);
+          doc.fillColor('#374151').text(r.description, 65, ry + 40, { width: contentW - 40, height: 20, ellipsis: true });
+          
+          doc.y = ry + 80;
         }
       }
+      doc.moveDown(2);
     }
 
-    // ----------------------------------------------------------------------
-    // CIERRE
-    // ----------------------------------------------------------------------
-    ensureSpace(doc, 70);
-    doc.moveDown(0.8);
-
-    drawRoundedBox(doc, {
-      x: 50,
-      y: doc.y,
-      w: contentW,
-      h: 52,
-      fill: '#EFF6FF',
-      stroke: '#BFDBFE',
-      r: 10,
-    });
-
-    doc
-      .font('Helvetica')
-      .fontSize(9.6)
-      .fillColor('#1E3A8A')
-      .text(
-        'Este informe se genera automáticamente con los datos clínicos visibles para el dueño al momento de la descarga.',
-        64,
-        doc.y + 17,
-        { width: contentW - 28, align: 'center' },
-      );
-
-    // Footer con numeración final
     drawFooterWithPageNumbers(doc);
-
     doc.end();
   } catch (error) {
-    console.error('Error al generar PDF:', error);
-    res.status(500).json({
-      error: 'Error al generar PDF',
-      details: error.message,
-    });
+    console.error('Error:', error);
+    res.status(500).send('Error generando PDF');
   }
 }

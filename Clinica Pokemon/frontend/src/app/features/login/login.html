@@ -1,7 +1,7 @@
 <div class="auth-container">
   <h2>Iniciar sesión</h2>
 
-  <form (ngSubmit)="login()">
+  <form (ngSubmit)="login()" #loginForm="ngForm">
     <input
       type="email"
       [(ngModel)]="email"
@@ -9,13 +9,22 @@
       placeholder="Correo electrónico"
       required
     />
-    <input
-      type="password"
-      [(ngModel)]="password"
-      name="password"
-      placeholder="Contraseña"
-      required
-    />
+    <div class="password-wrapper">
+      <input
+        [type]="showPassword ? 'text' : 'password'"
+        [(ngModel)]="password"
+        name="password"
+        placeholder="Contraseña"
+        required
+      />
+      <span class="toggle-eye" (click)="togglePassword()">
+        {{ showPassword ? '🙈' : '👁️' }}
+      </span>
+    </div>
+
+    <div class="forgot-link">
+      <a href="javascript:void(0)">¿Olvidaste tu contraseña?</a>
+    </div>
 
     <button type="submit">Entrar</button>
 
